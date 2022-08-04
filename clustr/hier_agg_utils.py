@@ -21,8 +21,8 @@ def get_agg_clusters(data_mat,
     model.fit(dist_mat)
     labels = model.labels_
     sil_score = silhouette_score(dist_mat, labels, metric='precomputed')
-    db_score = davies_bouldin_score(dist_mat, labels)
-    ch_score = calinski_harabasz_score(dist_mat, labels)
+    db_score = davies_bouldin_score(data_mat, labels)
+    ch_score = calinski_harabasz_score(data_mat, labels)
     dict_to_json({'silhouette': sil_score,
                   'davies_boulden': db_score,
                   'calinski_harabasz': ch_score},
