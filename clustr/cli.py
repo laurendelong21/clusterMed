@@ -67,12 +67,12 @@ def agg(datafl: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def lca_select(datafl: str,
-               min_k: int = 2,
-               max_k: int = 10,
-               sample_frac: float = 1,
-               drop_healthy: bool = False
-               ):
+def lcaselect(datafl: str,
+              min_k: int = 2,
+              max_k: int = 10,
+              sample_frac: float = 1,
+              drop_healthy: bool = False
+              ):
     """Helps facilitate model selection for LCA using BIC criterion
     :param datafl: the path for the data file to read the data in
     :param min_k: the minimum number k clusters to investigate
