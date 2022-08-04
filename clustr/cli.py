@@ -3,7 +3,7 @@ import logging
 import os.path as osp
 import pandas as pd
 from clustr.constants import PROCESSED_DATA, HIER_AGG_RESULTS
-from clustr.utils import get_data
+from clustr.utils import get_data, plot_morbidity_dist
 from clustr.hier_agg_utils import get_agg_clusters, plot_dendrogram
 
 logger = logging.getLogger(__name__)
@@ -52,3 +52,4 @@ def agg(datafl: str,
     plot_dendrogram(mat, dendro_outfl, metric, linkage)
     df['aggl_cluster_labels'] = labels
     df.to_csv(osp.join(HIER_AGG_RESULTS, outfl), sep='\t')
+    plot_morbidity_dist(df, labels, HIER_AGG_RESULTS, 'agglomerative_hierarchical')
