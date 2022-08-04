@@ -2,9 +2,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 # Use the theme of ggplot
 plt.style.use('ggplot')
-from typing import List
-import os
+from typing import List, Dict, Any
+import json
 import os.path as osp
+
+
+def dict_to_json(d: Dict[Any, Any],
+                 filename: str):
+    """Writes a dictionary to json file"""
+    with open(filename, "w") as outfile:
+        json.dump(d, outfile)
 
 
 def get_top_cluster_conds(df: pd.DataFrame,
