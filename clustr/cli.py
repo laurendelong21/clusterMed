@@ -1,6 +1,8 @@
 import click
 import logging
+import os.path as osp
 import pandas as pd
+from clustr.constants import PROCESSED_DATA, HIER_AGG_RESULTS
 from clustr.utils import get_data
 from clustr.hier_agg_utils import get_agg_clusters, plot_dendrogram
 
@@ -16,11 +18,11 @@ def cli():
 
 @cli.command()
 @click.option("-d", "--datafl", type=str, default=None,
-              help="the filepath to which the data should be read")
+              help="the file name containing the data")
 @click.option("-o", "--outfl", type=str, default=None,
-              help="the filepath to which the resulting file with cluster labels should be written")
+              help="the file name to which the resulting file with cluster labels should be written")
 @click.option("-do", "--dendro_outfl", type=str, default=None,
-              help="the filepath to which the dendrogram should be written")
+              help="the file name to which the dendrogram should be written")
 @click.option("-m", "--metric", type=str, default='hamming',
               help="the metric to be used for clustering")
 @click.option("-l", "--linkage", type=str, default='complete',
@@ -45,8 +47,8 @@ def agg(datafl: str,
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
     """
-    df, mat, pat_ids, labs, cgrps = get_data(datafl, sample_frac, drop_healthy)
+    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, datafl), sample_frac, drop_healthy)
     model, labels = get_agg_clusters(mat, metric, linkage)
     plot_dendrogram(mat, dendro_outfl, metric, linkage)
     df['aggl_cluster_labels'] = labels
-    df.to_csv(outfl, sep='\t')
+    df.to_csv(osp.join(HIER_AGG_RESULTS, outfl), sep='\t')

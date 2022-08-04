@@ -1,4 +1,5 @@
 from sklearn.cluster import AgglomerativeClustering
+from clustr.constants import HIER_AGG_RESULTS
 import scipy.cluster.hierarchy as sch
 import scipy.spatial.distance as ssd
 import matplotlib.pyplot as plt
@@ -25,11 +26,11 @@ def plot_dendrogram(data_mat,
                     linkage: str = 'complete'):
     """Plots and saves the corresponding dendrogram for the hierarchical agglomerative clustering
     :param data_mat: the numpy array containing the sample features
-    :param outfl: the file location at which the dendrogram picture should be saved
+    :param outfl: the file name to which the dendrogram picture should be saved
     :param metric: the metric type used for clustering; default is hamming distance
     :param linkage: linkage method; default is complete
     """
     dendrogram = sch.dendrogram(sch.linkage(data_mat,
                                             metric=metric,
                                             method=linkage))
-    plt.savefig(outfl, dpi=300, bbox_inches='tight')
+    plt.savefig(osp.join(HIER_AGG_RESULTS, outfl), dpi=300, bbox_inches='tight')
