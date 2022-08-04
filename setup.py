@@ -4,17 +4,17 @@
 
 from setuptools import setup, find_packages
 
-requirements = ['bayespy==0.5.22',
-                'click==8.0.3',
-                'scikit-learn==1.1.1',
-                'scikit-learn-extra==0.2.0',
-                'tqdm==4.64.0',
-                'plotnine==0.8.0',
-                'matplotlib==3.5.2',
-                'numpy==1.22.3',
-                'more-itertools==8.13.0',
-                'seaborn==0.11.2',
-                'scipy==1.8.1']
+requirements = ['bayespy',
+                'click',
+                'scikit-learn',
+                'scikit-learn-extra',
+                'tqdm',
+                'plotnine',
+                'matplotlib',
+                'numpy',
+                'more-itertools',
+                'seaborn',
+                'scipy']
 
 test_requirements = ['pytest>=3', ]
 
