@@ -111,3 +111,4 @@ def lca(datafl: str,
     model, labels = get_lca_clusters(mat, kclusters)
     df['lca_cluster_labels'] = labels
     df.to_csv(osp.join(LCA_RESULTS, outfl), sep='\t')
+    plot_morbidity_dist(df, 'lca_cluster_labels', LCA_RESULTS, 'latent_class_analysis')
