@@ -53,7 +53,7 @@ def agg(datafl: str,
     plot_dendrogram(mat, dendro_outfl, metric, linkage)
     df['aggl_cluster_labels'] = labels
     df.to_csv(osp.join(HIER_AGG_RESULTS, outfl), sep='\t')
-    # plot_morbidity_dist(df, labels, HIER_AGG_RESULTS, 'agglomerative_hierarchical')
+    plot_morbidity_dist(df, labels, HIER_AGG_RESULTS, 'agglomerative_hierarchical')
 
 
 @cli.command()
