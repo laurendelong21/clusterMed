@@ -17,13 +17,12 @@ def get_agg_clusters(data_mat,
     :param linkage: linkage method; default is complete
     """
     model = AgglomerativeClustering(n_clusters=10, affinity='precomputed', linkage=linkage)
-    dist_mat = ssd.squareform(ssd.pdist(data_mat, metric=metric))
-    model.fit(dist_mat)
+    model.fit(ssd.squareform(ssd.pdist(data_mat, metric=metric)))
     labels = model.labels_
-    sil_score = silhouette_score(dist_mat, labels, metric='precomputed')
+    # sil_score = silhouette_score(dist_mat, labels, metric='precomputed')
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
-    dict_to_json({'silhouette': sil_score,
+    dict_to_json({# 'silhouette': sil_score,
                   'davies_boulden': db_score,
                   'calinski_harabasz': ch_score},
                  osp.join(HIER_AGG_RESULTS, 'scores.json'))
