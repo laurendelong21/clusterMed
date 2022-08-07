@@ -141,7 +141,11 @@ def plot_morbidity_dist(df: pd.DataFrame,
     :returns: None; Outputs files to file location
     """
     # Individual Histograms
-    ax = df.plot.hist(column="tot_conditions", by=cluster_labels, figsize=(10, 40))
+    bin_no = max(df['tot_conditions']) + 1
+    ax = df.plot.hist(column="tot_conditions", by=cluster_labels, range=[1, bin_no], bins=bin_no*2,
+                      align='mid', figsize=(10, 40))
+    plt.xticks(np.arange(1, bin_no, 1))
+    plt.xlabel("Number of conditions")
     plt.savefig(osp.join(outfolder, f'{clustering_method}_histograms.png'), dpi=300, bbox_inches='tight')
     # Boxplot for comparison
     boxplot = df.boxplot(column="tot_conditions", by=cluster_labels)
