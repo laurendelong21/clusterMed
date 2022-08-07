@@ -20,7 +20,8 @@ def calculate_kmedoids(dfMatrix, max_k=10):
 
 
 def fit_kmedoids(data_mat,
-                 k: int = 10,):
+                 cgrps,
+                 k: int = 10):
     """TODO"""
     cobj = KMedoids(n_clusters=k, random_state=0, metric='cosine').fit(data_mat)
     labels = cobj.labels_
@@ -30,5 +31,13 @@ def fit_kmedoids(data_mat,
         'davies_boulden': db_score,
         'calinski_harabasz': ch_score},
         osp.join(KMEDOIDS_RESULTS, 'scores.json'))
+    # write centroids to file
+    centroid_comorbidities = {}
+    for count, cntrd in enumerate(cobj.cluster_centers_):
+        centroid_comorbidities[count] = []
+        for count2, m in enumerate(cntrd):
+            if m == 1:
+                centroid_comorbidities[count].append(cgrps[count2])
+    dict_to_json(centroid_comorbidities, osp.join(KMEDOIDS_RESULTS, 'centroids.json'))
     return cobj, labels
 

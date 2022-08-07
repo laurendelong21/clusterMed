@@ -139,7 +139,7 @@ def kmedoids(datafl: str,
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
     """
     df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, datafl), sample_frac, drop_healthy)
-    model, labels = fit_kmedoids(mat, kclusters)
+    model, labels = fit_kmedoids(mat, cgrps, kclusters)
     df['kmedoids_cluster_labels'] = labels
     df.to_csv(osp.join(KMEDOIDS_RESULTS, outfl), sep='\t')
     plot_morbidity_dist(df, 'kmedoids_cluster_labels', KMEDOIDS_RESULTS, 'kmedoids')
