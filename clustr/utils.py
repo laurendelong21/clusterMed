@@ -119,10 +119,10 @@ def plot_freqs(df: pd.DataFrame,
     if pvalue_dict:
         freqs = freqs[[cond for cond, pval in pvalue_dict[cluster_no].items() if pval < 0.05]]
         adj = adj[[cond for cond, pval in pvalue_dict[cluster_no].items()if pval < 0.05]]
-    freqs.plot.bar()
-    plt.yticks(rotation=90)
-    plt.ylabel("Frequency")
-    plt.savefig(osp.join(out_folder, "frequencies.png"), dpi=300, bbox_inches='tight')
+    #freqs.plot.bar()
+    #plt.yticks(rotation=90)
+    #plt.ylabel("Frequency")
+    #plt.savefig(osp.join(out_folder, f"cluster_{cluster_no}_frequencies.png"), dpi=300, bbox_inches='tight')
     adj.plot.bar()
     plt.yticks(rotation=90)
     plt.ylabel("Adjusted Relative Frequency")
