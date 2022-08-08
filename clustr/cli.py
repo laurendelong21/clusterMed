@@ -1,6 +1,7 @@
 import click
 import logging
 import os.path as osp
+from memory_profiler import profile
 import pandas as pd
 from clustr.constants import PROCESSED_DATA, HIER_AGG_RESULTS, LCA_RESULTS, KMEDOIDS_RESULTS, KMODES_RESULTS
 from clustr.utils import get_data, plot_morbidity_dist
@@ -19,6 +20,7 @@ def cli():
     pass
 
 
+@profile
 @cli.command()
 @click.option("-d", "--datafl", type=str, default=None,
               help="the file name containing the data")
