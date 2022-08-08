@@ -39,7 +39,7 @@ def get_adjusted_cluster_conds(df: pd.DataFrame,
     :param cgrps: the list of condition groups
     :param cluster_labels: the column name containing the cluster labels
     :param cluster_no: the cluster number to select"""
-    clus_morbs = get_top_cluster_conds(cluster_labels, cluster_no)
+    clus_morbs = get_top_cluster_conds(df, cgrps, cluster_labels, cluster_no)
     clus_freqs = clus_morbs.div(df[cluster_labels].value_counts()[cluster_no])
     morb_freqs = df[cgrps].sum().sort_values(ascending=False).div(len(df))
     adj_freqs = clus_freqs.div(morb_freqs).sort_values(ascending=False)
