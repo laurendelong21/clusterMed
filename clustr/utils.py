@@ -123,10 +123,10 @@ def plot_freqs(df: pd.DataFrame,
     #plt.yticks(rotation=90)
     #plt.ylabel("Frequency")
     #plt.savefig(osp.join(out_folder, f"cluster_{cluster_no}_frequencies.png"), dpi=300, bbox_inches='tight')
-    adj = adj.subtract(1)
     adj.plot.bar()
     plt.yticks(rotation=90)
     plt.ylabel("Adjusted Relative Frequency")
+    plt.axhline(y=1, color='blue', linestyle='-')
     plt.savefig(osp.join(out_folder, f"cluster_{cluster_no}_adj_frequencies.png"), dpi=300, bbox_inches='tight')
     # TODO: get the pvalues or **s somehow represented on this plot
 
