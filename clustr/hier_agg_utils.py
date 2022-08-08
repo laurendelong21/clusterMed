@@ -5,9 +5,11 @@ from clustr.constants import HIER_AGG_RESULTS
 import scipy.cluster.hierarchy as sch
 import scipy.spatial.distance as ssd
 import matplotlib.pyplot as plt
+from memory_profiler import profile
 import os.path as osp
 
 
+@profile
 def get_agg_clusters(data_mat,
                      metric: str = 'hamming',
                      linkage: str = 'complete'):

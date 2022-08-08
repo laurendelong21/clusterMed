@@ -3,7 +3,6 @@ from sklearn_extra.cluster import KMedoids
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
 from clustr.constants import KMEDOIDS_RESULTS
-from memory_profiler import profile
 
 
 def calculate_kmedoids(dfMatrix, max_k=10):
@@ -20,7 +19,6 @@ def calculate_kmedoids(dfMatrix, max_k=10):
     return cost
 
 
-@profile
 def fit_kmedoids(data_mat,
                  cgrps,
                  k: int = 10):
