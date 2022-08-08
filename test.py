@@ -15,7 +15,6 @@ def test_agg1():
     model, labels = get_agg_clusters(mat, 'hamming', 'complete')
     df['aggl_cluster_labels'] = labels
     df.to_csv(osp.join(HIER_AGG_RESULTS, 'gp_labs.tsv'), sep='\t')
-    plot_morbidity_dist(df, 'aggl_cluster_labels', HIER_AGG_RESULTS, 'agglomerative_hierarchical')
 
 
 @profile
@@ -25,7 +24,6 @@ def test_agg2():
     model, labels = get_agg_clusters(mat, 'hamming', 'complete')
     df['aggl_cluster_labels'] = labels
     df.to_csv(osp.join(HIER_AGG_RESULTS, 'gp_labs.tsv'), sep='\t')
-    plot_morbidity_dist(df, 'aggl_cluster_labels', HIER_AGG_RESULTS, 'agglomerative_hierarchical')
 
 
 @profile
@@ -35,7 +33,6 @@ def test_agg3():
     model, labels = get_agg_clusters(mat, 'hamming', 'complete')
     df['aggl_cluster_labels'] = labels
     df.to_csv(osp.join(HIER_AGG_RESULTS, 'gp_labs.tsv'), sep='\t')
-    plot_morbidity_dist(df, 'aggl_cluster_labels', HIER_AGG_RESULTS, 'agglomerative_hierarchical')
 
 
 if __name__ == '__main__':
