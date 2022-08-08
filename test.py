@@ -20,7 +20,7 @@ def test_agg1():
 @profile
 def test_agg2():
     """TODO"""
-    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, 'gp_mmorbs.tsv'), 0.05, True)
+    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, 'gp_mmorbs.tsv'), 0.25, True)
     model, labels = get_agg_clusters(mat, 'hamming', 'complete')
     df['aggl_cluster_labels'] = labels
     df.to_csv(osp.join(HIER_AGG_RESULTS, 'gp_labs.tsv'), sep='\t')
@@ -29,7 +29,7 @@ def test_agg2():
 @profile
 def test_agg3():
     """TODO"""
-    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, 'gp_mmorbs.tsv'), 0.1, True)
+    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, 'gp_mmorbs.tsv'), 1, True)
     model, labels = get_agg_clusters(mat, 'hamming', 'complete')
     df['aggl_cluster_labels'] = labels
     df.to_csv(osp.join(HIER_AGG_RESULTS, 'gp_labs.tsv'), sep='\t')
