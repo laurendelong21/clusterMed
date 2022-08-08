@@ -90,7 +90,8 @@ def find_fischers_coefficients(df: pd.DataFrame,
             oddsr, p = fisher_exact(cot_tab, alternative='two-sided')
             coeffs[clust][cond] = p
     if output_type == 'json':
-        dict_to_json(coeffs, outfl)
+        #dict_to_json(coeffs, outfl)
+        pass
     elif output_type == 'df':
         pd.DataFrame(coeffs).to_csv(outfl, sep='\t')
 
