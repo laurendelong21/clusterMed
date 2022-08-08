@@ -118,7 +118,7 @@ def plot_freqs(df: pd.DataFrame,
     adj, freqs = get_adjusted_cluster_conds(df, cgrps, labels_col, cluster_no)
     if pvalue_dict:
         freqs = freqs[[cond for cond, pval in pvalue_dict[cluster_no].items() if pval < 0.05]]
-        adj = adj[[cond for cond, pval in pvalue_dict[cluster_no].items()if pval < 0.05]]
+        adj = adj[[cond for cond, pval in pvalue_dict[cluster_no].items() if pval < 0.05]]
     #freqs.plot.bar()
     #plt.yticks(rotation=90)
     #plt.ylabel("Frequency")
