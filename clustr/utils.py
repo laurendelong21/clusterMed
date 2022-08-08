@@ -68,7 +68,7 @@ def generate_contingency_table(df: pd.DataFrame,
     # the rest of the people without the condition
     tot_no_cond = len(df) - tot_cond - clust_no_cond
     cont_table = np.array([[clust_cond, clust_no_cond],
-                           tot_cond, tot_no_cond])
+                           [tot_cond, tot_no_cond]])
     return cont_table
 
 
