@@ -6,6 +6,10 @@ import scipy.cluster.hierarchy as sch
 import scipy.spatial.distance as ssd
 import matplotlib.pyplot as plt
 import os.path as osp
+import sys
+
+
+sys.setrecursionlimit(100000)
 
 
 def get_agg_clusters(data_mat,
