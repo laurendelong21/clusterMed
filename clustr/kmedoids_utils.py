@@ -1,16 +1,20 @@
 import os.path as osp
+from typing import List
 from sklearn_extra.cluster import KMedoids
-from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
+from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
-from clustr.constants import KMEDOIDS_RESULTS
 
 
-def calculate_kmedoids(dfMatrix, max_k=10):
-    """Gets an array of costs per K"""
+def calculate_kmedoids(data_mat,
+                       max_k: int = 10):
+    """Gets an array of costs per K
+    :param data_mat: the numpy array containing the sample features
+    :param max_k: the maximum k clusters to test
+    """
     cost = []
     for cluster in range(1, max_k):
         try:
-            cobj = KMedoids(n_clusters=cluster, random_state=0, metric='cosine').fit(dfMatrix)
+            cobj = KMedoids(n_clusters=cluster, random_state=0, metric='cosine').fit(data_mat)
             cost.append(cobj.inertia_)
             print('Cluster initiation: {}'.format(cluster))
         except:
@@ -20,9 +24,17 @@ def calculate_kmedoids(dfMatrix, max_k=10):
 
 
 def fit_kmedoids(data_mat,
-                 cgrps,
+                 out_folder: str,
+                 cgrps: List[str],
                  k: int = 10):
-    """TODO"""
+    """
+    Fits KMedoids model to data
+    :param data_mat: the numpy array containing the sample features
+    :param out_folder: the folder to which the figure files should be written.
+    :param cgrps: an array of the condition groups being clustered
+    :param k: the number k clusters
+    :returns: the KMedoids model and the corresponding cluster labels
+    """
     cobj = KMedoids(n_clusters=k, random_state=0, metric='cosine').fit(data_mat)
     labels = cobj.labels_
     db_score = davies_bouldin_score(data_mat, labels)
@@ -30,7 +42,7 @@ def fit_kmedoids(data_mat,
     dict_to_json({  # 'silhouette': sil_score,
         'davies_boulden': db_score,
         'calinski_harabasz': ch_score},
-        osp.join(KMEDOIDS_RESULTS, 'scores.json'))
+        osp.join(out_folder, 'scores.json'))
     # write centroids to file
     centroid_comorbidities = {}
     for count, cntrd in enumerate(cobj.cluster_centers_):
@@ -38,6 +50,6 @@ def fit_kmedoids(data_mat,
         for count2, m in enumerate(cntrd):
             if m == 1:
                 centroid_comorbidities[count].append(cgrps[count2])
-    dict_to_json(centroid_comorbidities, osp.join(KMEDOIDS_RESULTS, 'centroids.json'))
+    dict_to_json(centroid_comorbidities, osp.join(out_folder, 'centroids.json'))
     return cobj, labels
 

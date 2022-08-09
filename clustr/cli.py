@@ -2,8 +2,11 @@ import click
 import logging
 import os.path as osp
 from memory_profiler import profile
-import pandas as pd
-from clustr.constants import PROCESSED_DATA, HIER_AGG_RESULTS, LCA_RESULTS, KMEDOIDS_RESULTS, KMODES_RESULTS
+from clustr.constants import PROCESSED_DATA
+from clustr.constants import HIER_AGG_RESULTS, AGG_MEN, AGG_WOMEN
+from clustr.constants import LCA_RESULTS, LCA_MEN, LCA_WOMEN
+from clustr.constants import KMEDOIDS_RESULTS, KMEDOIDS_MEN, KMEDOIDS_WOMEN
+from clustr.constants import KMODES_RESULTS, KMODES_MEN, KMODES_WOMEN
 from clustr.utils import get_data, plot_morbidity_dist
 from clustr.hier_agg_utils import get_agg_clusters, plot_dendrogram
 from clustr.lca_utils import select_lca_model, get_lca_clusters
@@ -22,12 +25,10 @@ def cli():
 
 @profile
 @cli.command()
-@click.option("-d", "--datafl", type=str, default=None,
-              help="the file name containing the data")
+@click.option("-g", "--gender", type=str, default=None,
+              help="denotes whether to take full data (None), only 'men', or only 'women'")
 @click.option("-o", "--outfl", type=str, default=None,
               help="the file name to which the resulting file with cluster labels should be written")
-@click.option("-do", "--dendro_outfl", type=str, default=None,
-              help="the file name to which the dendrogram should be written")
 @click.option("-m", "--metric", type=str, default='hamming',
               help="the metric to be used for clustering")
 @click.option("-l", "--linkage", type=str, default='complete',
@@ -36,33 +37,37 @@ def cli():
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def agg(datafl: str,
+def agg(gender: str,
         outfl: str,
-        dendro_outfl: str,
         metric: str = 'hamming',
         linkage: str = 'complete',
         sample_frac: float = 1,
         drop_healthy: bool = False):
     """Hierarchical agglomerative clustering from command line
-    :param datafl: the path for the data file to read the data in
+    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
     :param outfl: the file location at which the updated file with cluster labels should be saved
-    :param dendro_outfl: the file location at which the dendrogram picture should be saved
     :param metric: the metric type used for clustering; default is hamming distance
     :param linkage: linkage method; default is complete
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
     """
-    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, datafl), sample_frac, drop_healthy)
-    model, labels = get_agg_clusters(mat, metric, linkage)
-    plot_dendrogram(mat, dendro_outfl, metric, linkage)
+    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
+    if gender == 'men':
+        foldr = AGG_MEN
+    elif gender == 'women':
+        foldr = AGG_WOMEN
+    else:
+        foldr = HIER_AGG_RESULTS
+    model, labels = get_agg_clusters(mat, foldr, metric, linkage)
+    plot_dendrogram(mat, foldr, metric, linkage)
     df['aggl_cluster_labels'] = labels
-    df.to_csv(osp.join(HIER_AGG_RESULTS, outfl), sep='\t')
-    plot_morbidity_dist(df, 'aggl_cluster_labels', HIER_AGG_RESULTS, 'agglomerative_hierarchical')
+    df.to_csv(osp.join(foldr, outfl), sep='\t')
+    plot_morbidity_dist(df, 'aggl_cluster_labels', foldr, 'agglomerative_hierarchical')
 
 
 @cli.command()
-@click.option("-d", "--datafl", type=str, default=None,
-              help="the file name containing the data")
+@click.option("-g", "--gender", type=str, default=None,
+              help="denotes whether to take full data (None), only 'men', or only 'women'")
 @click.option("-mi", "--min_k", type=int, default=2,
               help="the minimum number k clusters to investigate")
 @click.option("-ma", "--max_k", type=int, default=10,
@@ -71,26 +76,32 @@ def agg(datafl: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def lcaselect(datafl: str,
+def lcaselect(gender: str,
               min_k: int = 2,
               max_k: int = 10,
               sample_frac: float = 1,
               drop_healthy: bool = False
               ):
     """Helps facilitate model selection for LCA using BIC criterion
-    :param datafl: the path for the data file to read the data in
+    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
     :param min_k: the minimum number k clusters to investigate
     :param max_k: the maximum number k clusters to investigate
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
     """
-    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, datafl), sample_frac, drop_healthy)
-    select_lca_model(mat, min_k, max_k)
+    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
+    if gender == 'men':
+        foldr = LCA_MEN
+    elif gender == 'women':
+        foldr = LCA_WOMEN
+    else:
+        foldr = LCA_RESULTS
+    select_lca_model(mat, foldr, min_k, max_k)
 
 
 @cli.command()
-@click.option("-d", "--datafl", type=str, default=None,
-              help="the file name containing the data")
+@click.option("-g", "--gender", type=str, default=None,
+              help="denotes whether to take full data (None), only 'men', or only 'women'")
 @click.option("-o", "--outfl", type=str, default=None,
               help="the file name to which the resulting file with cluster labels should be written")
 @click.option("-k", "--kclusters", type=int, default=10,
@@ -99,28 +110,34 @@ def lcaselect(datafl: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def lca(datafl: str,
+def lca(gender: str,
         outfl: str,
         kclusters: int = 10,
         sample_frac: float = 1,
         drop_healthy: bool = False):
     """Performs LCA clustering
-    :param datafl: the path for the data file to read the data in
+    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
     :param outfl: the file location at which the updated file with cluster labels should be saved
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
     """
-    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, datafl), sample_frac, drop_healthy)
-    model, labels = get_lca_clusters(mat, kclusters)
+    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
+    if gender == 'men':
+        foldr = LCA_MEN
+    elif gender == 'women':
+        foldr = LCA_WOMEN
+    else:
+        foldr = LCA_RESULTS
+    model, labels = get_lca_clusters(mat, foldr, kclusters)
     df['lca_cluster_labels'] = labels
-    df.to_csv(osp.join(LCA_RESULTS, outfl), sep='\t')
-    plot_morbidity_dist(df, 'lca_cluster_labels', LCA_RESULTS, 'latent_class_analysis')
+    df.to_csv(osp.join(foldr, outfl), sep='\t')
+    plot_morbidity_dist(df, 'lca_cluster_labels', foldr, 'latent_class_analysis')
 
 
 @cli.command()
-@click.option("-d", "--datafl", type=str, default=None,
-              help="the file name containing the data")
+@click.option("-g", "--gender", type=str, default=None,
+              help="denotes whether to take full data (None), only 'men', or only 'women'")
 @click.option("-o", "--outfl", type=str, default=None,
               help="the file name to which the resulting file with cluster labels should be written")
 @click.option("-k", "--kclusters", type=int, default=10,
@@ -129,28 +146,34 @@ def lca(datafl: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def kmedoids(datafl: str,
+def kmedoids(gender: str,
              outfl: str,
              kclusters: int = 10,
              sample_frac: float = 1,
              drop_healthy: bool = False):
     """Performs KMedoids clustering
-    :param datafl: the path for the data file to read the data in
+    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
     :param outfl: the file location at which the updated file with cluster labels should be saved
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
     """
-    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, datafl), sample_frac, drop_healthy)
-    model, labels = fit_kmedoids(mat, cgrps, kclusters)
+    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
+    if gender == 'men':
+        foldr = KMEDOIDS_MEN
+    elif gender == 'women':
+        foldr = KMEDOIDS_WOMEN
+    else:
+        foldr = KMEDOIDS_RESULTS
+    model, labels = fit_kmedoids(mat, foldr, cgrps, kclusters)
     df['kmedoids_cluster_labels'] = labels
-    df.to_csv(osp.join(KMEDOIDS_RESULTS, outfl), sep='\t')
-    plot_morbidity_dist(df, 'kmedoids_cluster_labels', KMEDOIDS_RESULTS, 'kmedoids')
+    df.to_csv(osp.join(foldr, outfl), sep='\t')
+    plot_morbidity_dist(df, 'kmedoids_cluster_labels', foldr, 'kmedoids')
 
 
 @cli.command()
-@click.option("-d", "--datafl", type=str, default=None,
-              help="the file name containing the data")
+@click.option("-g", "--gender", type=str, default=None,
+              help="denotes whether to take full data (None), only 'men', or only 'women'")
 @click.option("-o", "--outfl", type=str, default=None,
               help="the file name to which the resulting file with cluster labels should be written")
 @click.option("-k", "--kclusters", type=int, default=10,
@@ -159,20 +182,26 @@ def kmedoids(datafl: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def kmodes(datafl: str,
+def kmodes(gender: str,
            outfl: str,
            kclusters: int = 10,
            sample_frac: float = 1,
            drop_healthy: bool = False):
     """Performs KModes clustering
-    :param datafl: the path for the data file to read the data in
+    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
     :param outfl: the file location at which the updated file with cluster labels should be saved
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
     """
-    df, mat, pat_ids, labs, cgrps = get_data(osp.join(PROCESSED_DATA, datafl), sample_frac, drop_healthy)
-    model, labels = fit_kmodes(mat, cgrps, kclusters)
+    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
+    if gender == 'men':
+        foldr = KMODES_MEN
+    elif gender == 'women':
+        foldr = KMODES_WOMEN
+    else:
+        foldr = KMODES_RESULTS
+    model, labels = fit_kmodes(mat, foldr, cgrps, kclusters)
     df['kmodes_cluster_labels'] = labels
-    df.to_csv(osp.join(KMODES_RESULTS, outfl), sep='\t')
-    plot_morbidity_dist(df, 'kmodes_cluster_labels', KMODES_RESULTS, 'kmodes')
+    df.to_csv(osp.join(foldr, outfl), sep='\t')
+    plot_morbidity_dist(df, 'kmodes_cluster_labels', foldr, 'kmodes')

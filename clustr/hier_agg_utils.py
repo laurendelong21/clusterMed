@@ -1,7 +1,6 @@
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
+from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
-from clustr.constants import HIER_AGG_RESULTS
 import scipy.cluster.hierarchy as sch
 import scipy.spatial.distance as ssd
 import matplotlib.pyplot as plt
@@ -13,10 +12,12 @@ sys.setrecursionlimit(100000)
 
 
 def get_agg_clusters(data_mat,
+                     out_folder: str,
                      metric: str = 'hamming',
                      linkage: str = 'complete'):
     """Gets the hierarchical agglomerative clustering results for a given matrix
     :param data_mat: the numpy array containing the sample features
+    :param out_folder: the folder to which the figure files should be written.
     :param metric: the metric type used for clustering; default is hamming distance
     :param linkage: linkage method; default is complete
     """
@@ -26,24 +27,23 @@ def get_agg_clusters(data_mat,
     # sil_score = silhouette_score(dist_mat, labels, metric='precomputed')
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
-    dict_to_json({# 'silhouette': sil_score,
-                  'davies_boulden': db_score,
+    dict_to_json({'davies_boulden': db_score,
                   'calinski_harabasz': ch_score},
-                 osp.join(HIER_AGG_RESULTS, 'scores.json'))
+                 osp.join(out_folder, 'scores.json'))
     return model, labels
 
 
 def plot_dendrogram(data_mat,
-                    outfl,
+                    out_folder: str,
                     metric: str = 'hamming',
                     linkage: str = 'complete'):
     """Plots and saves the corresponding dendrogram for the hierarchical agglomerative clustering
     :param data_mat: the numpy array containing the sample features
-    :param outfl: the file name to which the dendrogram picture should be saved
+    :param out_folder: the folder to which the figure files should be written.
     :param metric: the metric type used for clustering; default is hamming distance
     :param linkage: linkage method; default is complete
     """
     dendrogram = sch.dendrogram(sch.linkage(data_mat,
                                             metric=metric,
                                             method=linkage))
-    plt.savefig(osp.join(HIER_AGG_RESULTS, outfl), dpi=300, bbox_inches='tight')
+    plt.savefig(osp.join(out_folder, 'dendrogram.png'), dpi=300, bbox_inches='tight')

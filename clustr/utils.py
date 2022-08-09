@@ -7,6 +7,7 @@ from typing import List, Dict, Any
 import json
 import os.path as osp
 from scipy.stats import fisher_exact
+from clustr.constants import GP_DATA, GP_DATA_MEN, GP_DATA_WOMEN
 
 
 def dict_to_json(d: Dict[Any, Any],
@@ -176,20 +177,25 @@ def plot_depression(df: pd.DataFrame,
     # TODO: add percentages
 
 
-def get_data(datafl: str,
-             sample_frac: float = 1,
-             drop_healthy: bool = False):
+def get_data(sample_frac: float = 1,
+             drop_healthy: bool = False,
+             gender: str = None):
     """Gets the data and returns it as a numpy matrix without the depression column.
-    :param datafl: the path for the data file to read the data in
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
+    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
     :returns: dataframe of the data,
                 numpy matrix of features,
                 patient ids,
                 depression labels, &
                 feature column names
     """
-    df = pd.read_csv(datafl, sep='\t', index_col=0)
+    if gender == 'men':
+        df = pd.read_csv(GP_DATA_MEN, sep='\t', index_col=0)
+    elif gender == 'women':
+        df = pd.read_csv(GP_DATA_WOMEN, sep='\t', index_col=0)
+    else:
+        df = pd.read_csv(GP_DATA, sep='\t', index_col=0)
     # Subset the data if necessary
     df = df.sample(frac=sample_frac, random_state=1)
     # Get patient IDs
