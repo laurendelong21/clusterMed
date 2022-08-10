@@ -181,7 +181,9 @@ def plot_depression(df: pd.DataFrame,
     # TODO: add percentages
 
 
-def plot_ks(cost, max_k=10):
+def plot_ks(cost,
+            out_folder,
+            max_k=10):
     """Plots the respective costs per K"""
     df_cost = pd.DataFrame({'Cluster': range(1, max_k), 'Cost': cost})  # Data viz
     plotnine.options.figure_size = (8, 4.8)
@@ -201,7 +203,7 @@ def plot_ks(cost, max_k=10):
             ylab('Cost') +
             theme_minimal()
     )
-    plotnine.draw(show=True)
+    plt.savefig(osp.join(out_folder, 'model_selection.png'), dpi=300, bbox_inches='tight')
 
 
 def get_data(sample_frac: float = 1,
