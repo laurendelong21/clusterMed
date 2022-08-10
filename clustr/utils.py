@@ -187,7 +187,7 @@ def plot_ks(cost,
     """Plots the respective costs per K"""
     df_cost = pd.DataFrame({'Cluster': range(1, max_k), 'Cost': cost})  # Data viz
     plotnine.options.figure_size = (8, 4.8)
-    (
+    gg_obj = (
             ggplot(data=df_cost) +
             geom_line(aes(x='Cluster',
                           y='Cost')) +
@@ -198,12 +198,12 @@ def plot_ks(cost,
                            label='Cluster'),
                        size=max_k,
                        nudge_y=1000) +
-            labs(title='Optimal number of clusters for K Modes method') +
+            labs(title='Optimal number of Clusters') +
             xlab('Number of Clusters k') +
             ylab('Cost') +
             theme_minimal()
     )
-    plt.savefig(osp.join(out_folder, 'model_selection.png'), dpi=300, bbox_inches='tight')
+    gg_obj.save(filename=osp.join(out_folder, 'model_selection.png'), dpi=300)
 
 
 def get_data(sample_frac: float = 1,
