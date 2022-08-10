@@ -184,6 +184,7 @@ def plot_depression(df: pd.DataFrame,
 def plot_ks(cost,
             out_folder,
             max_k=10):
+
     """Plots the respective costs per K"""
     df_cost = pd.DataFrame({'Cluster': range(1, max_k), 'Cost': cost})  # Data viz
     plotnine.options.figure_size = (8, 4.8)
