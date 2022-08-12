@@ -6,13 +6,15 @@ from clustr.utils import dict_to_json
 
 
 def calculate_kmedoids(data_mat,
+                       min_k: int = 1,
                        max_k: int = 10):
     """Gets an array of costs per K
     :param data_mat: the numpy array containing the sample features
+    :param min_k: the minimum k clusters to test
     :param max_k: the maximum k clusters to test
     """
     cost = []
-    for cluster in range(1, max_k):
+    for cluster in range(min_k, max_k):
         try:
             cobj = KMedoids(n_clusters=cluster, random_state=0, metric='cosine').fit(data_mat)
             cost.append(cobj.inertia_)

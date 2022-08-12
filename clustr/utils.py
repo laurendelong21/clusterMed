@@ -183,10 +183,11 @@ def plot_depression(df: pd.DataFrame,
 
 def plot_ks(cost,
             out_folder,
+            min_k=1,
             max_k=10):
 
     """Plots the respective costs per K"""
-    df_cost = pd.DataFrame({'Cluster': range(1, max_k), 'Cost': cost})  # Data viz
+    df_cost = pd.DataFrame({'Cluster': range(min_k, max_k), 'Cost': cost})  # Data viz
     plotnine.options.figure_size = (8, 4.8)
     gg_obj = (
             ggplot(data=df_cost) +

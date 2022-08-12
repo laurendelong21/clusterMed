@@ -138,6 +138,8 @@ def lca(gender: str,
 @cli.command()
 @click.option("-g", "--gender", type=str, default=None,
               help="denotes whether to take full data (None), only 'men', or only 'women'")
+@click.option("-mi", "--min_k", type=int, default=2,
+              help="the minimum number k clusters to investigate")
 @click.option("-ma", "--max_k", type=int, default=10,
               help="the maximum number k clusters to investigate")
 @click.option("-s", "--sample_frac", type=float, default=1,
@@ -145,12 +147,14 @@ def lca(gender: str,
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
 def kmeselect(gender: str,
+              min_k: int = 2,
               max_k: int = 10,
               sample_frac: float = 1,
               drop_healthy: bool = False
               ):
     """Helps facilitate model selection for LCA using BIC criterion
     :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
+    :param min_k: the minimum number k clusters to investigate
     :param max_k: the maximum number k clusters to investigate
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
@@ -162,8 +166,8 @@ def kmeselect(gender: str,
         foldr = KMEDOIDS_WOMEN
     else:
         foldr = KMEDOIDS_RESULTS
-    costs = calculate_kmedoids(mat, max_k)
-    plot_ks(costs, foldr, max_k)
+    costs = calculate_kmedoids(mat, min_k, max_k)
+    plot_ks(costs, foldr, min_k, max_k)
 
 
 @cli.command()
@@ -205,6 +209,8 @@ def kmedoids(gender: str,
 @cli.command()
 @click.option("-g", "--gender", type=str, default=None,
               help="denotes whether to take full data (None), only 'men', or only 'women'")
+@click.option("-mi", "--min_k", type=int, default=2,
+              help="the minimum number k clusters to investigate")
 @click.option("-ma", "--max_k", type=int, default=10,
               help="the maximum number k clusters to investigate")
 @click.option("-s", "--sample_frac", type=float, default=1,
@@ -212,12 +218,14 @@ def kmedoids(gender: str,
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
 def kmoselect(gender: str,
+              min_k: int = 2,
               max_k: int = 10,
               sample_frac: float = 1,
               drop_healthy: bool = False
               ):
     """Helps facilitate model selection for LCA using BIC criterion
     :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
+    :param min_k: the minimum number k clusters to investigate
     :param max_k: the maximum number k clusters to investigate
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
@@ -230,7 +238,7 @@ def kmoselect(gender: str,
     else:
         foldr = KMODES_RESULTS
     costs = calculate_kmodes(mat, max_k)
-    plot_ks(costs, foldr, max_k)
+    plot_ks(costs, foldr, min_k, max_k)
 
 
 @cli.command()
