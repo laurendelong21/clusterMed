@@ -11,6 +11,7 @@ from typing import List, Dict, Any
 import json
 import os.path as osp
 from scipy.stats import fisher_exact
+from statsmodels.stats.multitest import multipletests
 from clustr.constants import GP_DATA, GP_DATA_MEN, GP_DATA_WOMEN
 
 
@@ -83,24 +84,34 @@ def find_fischers_coefficients(df: pd.DataFrame,
                                outfl: str,
                                output_type: str = 'json'):
     """Finds a Fischer's Exact Test p value for each condition and each cluster label
-    to assess whether each condition is overrepresented in each cluster"""
+    to assess whether each condition is overrepresented in each cluster
+    Returns two dictionaries: one is the p values, and one is the p values adjusted for Bonferonni and
+    alpha of 0.05"""
     coeffs = {}
+    adj_coeffs = {}
     for clust in df[labels_col].unique():
         coeffs[clust] = {}
+        conds = []
+        pvals = []
         for cond in cgrps:
             cot_tab = generate_contingency_table(df,
                                                  cond,
                                                  labels_col,
                                                  clust)
             oddsr, p = fisher_exact(cot_tab, alternative='two-sided')
+            conds.append(cond)
+            pvals.append(p)
             coeffs[clust][cond] = p
+        _, adj_pvals, _, _ = multipletests(pvals, 0.05, 'bonferroni')
+        for c, a in zip(conds, adj_pvals):
+            adj_coeffs[clust][c] = a
     if output_type == 'json':
         #dict_to_json(coeffs, outfl)
         pass
     elif output_type == 'df':
         pd.DataFrame(coeffs).to_csv(outfl, sep='\t')
 
-    return coeffs
+    return coeffs, adj_coeffs
 
 
 def plot_freqs(df: pd.DataFrame,
