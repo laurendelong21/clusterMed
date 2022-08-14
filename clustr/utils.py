@@ -91,6 +91,7 @@ def find_fischers_coefficients(df: pd.DataFrame,
     adj_coeffs = {}
     for clust in df[labels_col].unique():
         coeffs[clust] = {}
+        adj_coeffs[clust] = {}
         conds = []
         pvals = []
         for cond in cgrps:
