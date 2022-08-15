@@ -120,7 +120,8 @@ def plot_freqs(df: pd.DataFrame,
                labels_col: str,
                cluster_no: int,
                out_folder: str,
-               pvalue_dict=None):
+               pvalue_dict=None,
+               yaxis_norm=None):
     """Plots and generates figures for the frequencies and adjusted relative frequencies of each condition
     in the specified cluster. If pvalue_dict is passed from the Fischer's test, then only plots
     those conditions which are significantly under- or over- represented.
@@ -131,6 +132,7 @@ def plot_freqs(df: pd.DataFrame,
     :param out_folder: the folder to which the figure files should be written.
     :param pvalue_dict: the dictionary of dictionaries containing {cluster number: {condition: pvalue}}
             if None, then all frequencies will be plotted.
+    :param yaxis_norm: the max number of the y axis to which the plot should be scaled to
     """
     adj, freqs = get_adjusted_cluster_conds(df, cgrps, labels_col, cluster_no)
     if pvalue_dict:
@@ -141,6 +143,8 @@ def plot_freqs(df: pd.DataFrame,
     #plt.ylabel("Frequency")
     #plt.savefig(osp.join(out_folder, f"cluster_{cluster_no}_frequencies.png"), dpi=300, bbox_inches='tight')
     adj.sort_values(ascending=False).plot.bar(figsize=(15, 10))
+    if yaxis_norm:
+        plt.ylim([0, yaxis_norm])
     plt.yticks(rotation=90)
     plt.ylabel("Adjusted Relative Frequency")
     plt.axhline(y=1, color='blue', linestyle='-')
