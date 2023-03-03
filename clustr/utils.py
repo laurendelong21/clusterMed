@@ -142,12 +142,12 @@ def plot_freqs(df: pd.DataFrame,
     #plt.yticks(rotation=90)
     #plt.ylabel("Frequency")
     #plt.savefig(osp.join(out_folder, f"cluster_{cluster_no}_frequencies.png"), dpi=300, bbox_inches='tight')
-    adj.sort_values(ascending=False).plot.bar(figsize=(15, 10))
+    adj.sort_values(ascending=False).plot.bar(figsize=(15, 10), color="darkblue")
     if yaxis_norm:
         plt.ylim([0, yaxis_norm])
     plt.yticks(rotation=90)
     plt.ylabel("Adjusted Relative Frequency")
-    plt.axhline(y=1, color='blue', linestyle='-')
+    plt.axhline(y=1, color='darkred', linestyle='-')
     plt.savefig(osp.join(out_folder, f"cluster_{cluster_no}_adj_frequencies.png"), dpi=300, bbox_inches='tight')
     # TODO: get the pvalues or **s somehow represented on this plot
 
