@@ -12,13 +12,16 @@ def calculate_kmodes(dfMatrix,
                      distance_metric='Huang'):
     """Gets an array of costs per K"""
     cost = []
+    sil_scores = []
     for cluster in range(1, max_k):
         kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, random_state=0)
         kmodes.fit_predict(dfMatrix)
+        labels = kmodes.labels_
         cost.append(kmodes.cost_)
+        sil_scores.append(silhouette_score(dfMatrix, labels))
         print('Cluster initiation: {}'.format(cluster))
 
-    return cost
+    return cost, sil_scores
 
 
 def fit_kmodes(data_mat,

@@ -199,12 +199,14 @@ def plot_depression(df: pd.DataFrame,
 
 def plot_ks(cost,
             out_folder,
+            metric='costs',
             min_k=1,
             max_k=10):
 
     """Plots the respective costs per K"""
     df_cost = pd.DataFrame({'Cluster': range(min_k, max_k), 'Cost': cost})  # Data viz
-    plotnine.options.figure_size = (8, 4.8)
+    num_ks = max_k - min_k
+    plotnine.options.figure_size = (int(num_ks * 8 / 9), 4.8)
     gg_obj = (
             ggplot(data=df_cost) +
             geom_line(aes(x='Cluster',
@@ -217,11 +219,11 @@ def plot_ks(cost,
                        size=max_k,
                        nudge_y=1000) +
             labs(title='Optimal number of Clusters') +
-            xlab('Number of Clusters k') +
+            xlab('Number of Clusters (k)') +
             ylab('Cost') +
             theme_minimal()
     )
-    gg_obj.save(filename=osp.join(out_folder, 'model_selection.png'), dpi=300)
+    gg_obj.save(filename=osp.join(out_folder, f'model_selection_{metric}.png'), dpi=300)
 
 
 def get_data(sample_frac: float = 1,

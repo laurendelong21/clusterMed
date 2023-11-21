@@ -1,7 +1,7 @@
 import os.path as osp
 from typing import List
 from sklearn_extra.cluster import KMedoids
-from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score
+from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
 
 
@@ -14,15 +14,18 @@ def calculate_kmedoids(data_mat,
     :param max_k: the maximum k clusters to test
     """
     cost = []
+    sil_scores = []
     for cluster in range(min_k, max_k):
         try:
             cobj = KMedoids(n_clusters=cluster, random_state=0, metric='cosine').fit(data_mat)
+            labels = cobj.labels_
             cost.append(cobj.inertia_)
+            sil_scores.append(silhouette_score(data_mat, labels))
             print('Cluster initiation: {}'.format(cluster))
         except:
             break
 
-    return cost
+    return cost, sil_scores
 
 
 def fit_kmedoids(data_mat,

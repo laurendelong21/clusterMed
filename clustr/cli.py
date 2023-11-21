@@ -166,8 +166,9 @@ def kmeselect(gender: str,
         foldr = KMEDOIDS_WOMEN
     else:
         foldr = KMEDOIDS_RESULTS
-    costs = calculate_kmedoids(mat, min_k, max_k)
-    plot_ks(costs, foldr, min_k, max_k)
+    costs, sil_scores = calculate_kmedoids(mat, min_k, max_k)
+    plot_ks(costs, foldr, 'costs', min_k, max_k)
+    plot_ks(sil_scores, foldr, 'silhouette', min_k, max_k)
 
 
 @cli.command()
@@ -237,8 +238,9 @@ def kmoselect(gender: str,
         foldr = KMODES_WOMEN
     else:
         foldr = KMODES_RESULTS
-    costs = calculate_kmodes(mat, max_k)
-    plot_ks(costs, foldr, min_k, max_k)
+    costs, sil_scores = calculate_kmodes(mat, max_k)
+    plot_ks(costs, foldr, 'costs', min_k, max_k)
+    plot_ks(sil_scores, foldr, 'silhouette', min_k, max_k)
 
 
 @cli.command()
