@@ -19,7 +19,7 @@ def calculate_kmodes(dfMatrix,
         kmodes.fit_predict(dfMatrix)
         labels = kmodes.labels_
         cost[cluster] = kmodes.cost_
-        sil_scores[cluster] = silhouette_score(dfMatrix, labels)
+        sil_scores[cluster] = silhouette_score(dfMatrix, labels, metric='cosine')
         print('Cluster initiation: {}'.format(cluster))
 
     return cost, sil_scores
