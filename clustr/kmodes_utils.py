@@ -5,14 +5,15 @@ from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_har
 from clustr.utils import dict_to_json
 import matplotlib.pyplot as plt
 import pandas as pd
+from collections import OrderedDict
 
 
 def calculate_kmodes(dfMatrix,
                      max_k=10,
                      distance_metric='Huang'):
     """Gets an array of costs per K"""
-    cost = dict()
-    sil_scores = dict()
+    cost = OrderedDict()
+    sil_scores = OrderedDict()
     for cluster in range(1, max_k):
         kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, random_state=0)
         kmodes.fit_predict(dfMatrix)

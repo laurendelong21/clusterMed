@@ -3,7 +3,7 @@ from typing import List
 from sklearn_extra.cluster import KMedoids
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
-import numpy as np
+from collections import OrderedDict
 
 
 def calculate_kmedoids(data_mat,
@@ -14,8 +14,8 @@ def calculate_kmedoids(data_mat,
     :param min_k: the minimum k clusters to test
     :param max_k: the maximum k clusters to test
     """
-    cost = dict()
-    sil_scores = dict()
+    cost = OrderedDict()
+    sil_scores = OrderedDict()
     for cluster in range(min_k, max_k):
         try:
             cobj = KMedoids(n_clusters=cluster, random_state=0, metric='cosine').fit(data_mat)
@@ -24,8 +24,8 @@ def calculate_kmedoids(data_mat,
             sil_scores[cluster] = silhouette_score(data_mat, labels)
             print('Cluster initiation: {}'.format(cluster))
         except:
-            cost[cluster] = np.nan
-            sil_scores[cluster] = np.nan
+            cost[cluster] = -1
+            sil_scores[cluster] = -1
 
     return cost, sil_scores
 
