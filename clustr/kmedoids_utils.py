@@ -14,18 +14,18 @@ def calculate_kmedoids(data_mat,
     :param min_k: the minimum k clusters to test
     :param max_k: the maximum k clusters to test
     """
-    cost = []
-    sil_scores = []
+    cost = dict()
+    sil_scores = dict()
     for cluster in range(min_k, max_k):
         try:
             cobj = KMedoids(n_clusters=cluster, random_state=0, metric='cosine').fit(data_mat)
             labels = cobj.labels_
-            cost.append(cobj.inertia_)
-            sil_scores.append(silhouette_score(data_mat, labels))
+            cost[cluster] = cobj.inertia_
+            sil_scores[cluster] = silhouette_score(data_mat, labels)
             print('Cluster initiation: {}'.format(cluster))
         except:
-            cost.append(np.nan)
-            sil_scores.append(np.nan)
+            cost[cluster] = np.nan
+            sil_scores[cluster] = np.nan
 
     return cost, sil_scores
 

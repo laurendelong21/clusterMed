@@ -7,7 +7,7 @@ from clustr.constants import HIER_AGG_RESULTS, AGG_MEN, AGG_WOMEN
 from clustr.constants import LCA_RESULTS, LCA_MEN, LCA_WOMEN
 from clustr.constants import KMEDOIDS_RESULTS, KMEDOIDS_MEN, KMEDOIDS_WOMEN
 from clustr.constants import KMODES_RESULTS, KMODES_MEN, KMODES_WOMEN
-from clustr.utils import get_data, plot_ks, plot_morbidity_dist
+from clustr.utils import get_data, plot_ks, plot_morbidity_dist, dict_to_json
 from clustr.hier_agg_utils import get_agg_clusters, plot_dendrogram
 from clustr.lca_utils import select_lca_model, get_lca_clusters
 from clustr.kmedoids_utils import calculate_kmedoids, fit_kmedoids
@@ -96,7 +96,8 @@ def lcaselect(gender: str,
         foldr = LCA_WOMEN
     else:
         foldr = LCA_RESULTS
-    select_lca_model(mat, foldr, min_k, max_k)
+    bics = select_lca_model(mat, foldr, min_k, max_k)
+    dict_to_json(bics, osp.join(foldr, 'bics.json'))
 
 
 @cli.command()
@@ -167,6 +168,8 @@ def kmeselect(gender: str,
     else:
         foldr = KMEDOIDS_RESULTS
     costs, sil_scores = calculate_kmedoids(mat, min_k, max_k)
+    dict_to_json(costs, osp.join(foldr, 'costs.json'))
+    dict_to_json(sil_scores, osp.join(foldr, 'sil_scores.json'))
     plot_ks(costs, foldr, 'costs', min_k, max_k)
     plot_ks(sil_scores, foldr, 'silhouette', min_k, max_k)
 
@@ -239,6 +242,8 @@ def kmoselect(gender: str,
     else:
         foldr = KMODES_RESULTS
     costs, sil_scores = calculate_kmodes(mat, max_k)
+    dict_to_json(costs, osp.join(foldr, 'costs.json'))
+    dict_to_json(sil_scores, osp.join(foldr, 'sil_scores.json'))
     plot_ks(costs, foldr, 'costs', min_k, max_k)
     plot_ks(sil_scores, foldr, 'silhouette', min_k, max_k)
 

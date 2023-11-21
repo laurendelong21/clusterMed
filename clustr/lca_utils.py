@@ -4,6 +4,7 @@ from clustr.utils import dict_to_json
 import os.path as osp
 import matplotlib.pyplot as plt
 from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score
+from collections import OrderedDict
 
 
 def select_lca_model(data_mat,
@@ -12,12 +13,14 @@ def select_lca_model(data_mat,
                      max_k: int = 10):
     """Generates a plot of BIC per k number of clusters for model selection"""
     ks = [k for k in range(min_k, max_k + 1)]
-    bics = []
+    bics = OrderedDict()
     for k in ks:
         lca = LCA(n_components=k, tol=10e-4, max_iter=1000)
         lca.fit(data_mat)
-        bics.append(lca.bic)
+        bics[k] = lca.bic
     # Plot the BIC per K
+    ks = list(bics.keys())
+    bics = list(bics.values())
     _, ax = plt.subplots(figsize=(15, 5))
     ax.plot(ks, bics, linewidth=3)
     ax.grid(True)
@@ -25,6 +28,8 @@ def select_lca_model(data_mat,
     ax.set_xlabel("k clusters")
     ax.set_ylabel("Bayesian Information Criterion (BIC)")
     plt.savefig(osp.join(out_folder, 'model_selection.png'), dpi=300, bbox_inches='tight')
+
+    return dict(bics)
 
 
 def get_lca_clusters(data_mat,
