@@ -3,6 +3,7 @@ from typing import List
 from sklearn_extra.cluster import KMedoids
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
+import numpy as np
 
 
 def calculate_kmedoids(data_mat,
@@ -23,7 +24,8 @@ def calculate_kmedoids(data_mat,
             sil_scores.append(silhouette_score(data_mat, labels))
             print('Cluster initiation: {}'.format(cluster))
         except:
-            break
+            cost.append(np.nan)
+            sil_scores.append(np.nan)
 
     return cost, sil_scores
 
