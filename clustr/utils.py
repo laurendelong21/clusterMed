@@ -220,7 +220,7 @@ def plot_ks(cost,
                        nudge_y=1000) +
             labs(title='Optimal number of Clusters') +
             xlab('Number of Clusters (k)') +
-            ylab('Cost') +
+            ylab(f'{metric}') +
             theme_minimal()
     )
     gg_obj.save(filename=osp.join(out_folder, f'model_selection_{metric}.png'), dpi=300)

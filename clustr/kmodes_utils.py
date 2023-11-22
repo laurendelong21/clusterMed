@@ -9,12 +9,13 @@ from collections import OrderedDict
 
 
 def calculate_kmodes(dfMatrix,
+                     min_k=1,
                      max_k=10,
                      distance_metric='Huang'):
     """Gets an array of costs per K"""
     cost = OrderedDict()
     sil_scores = OrderedDict()
-    for cluster in range(1, max_k):
+    for cluster in range(min_k, max_k):
         kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, random_state=0)
         kmodes.fit_predict(dfMatrix)
         labels = kmodes.labels_

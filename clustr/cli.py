@@ -241,7 +241,7 @@ def kmoselect(gender: str,
         foldr = KMODES_WOMEN
     else:
         foldr = KMODES_RESULTS
-    costs, sil_scores = calculate_kmodes(mat, max_k)
+    costs, sil_scores = calculate_kmodes(mat, min_k, max_k)
     dict_to_json(dict(costs), osp.join(foldr, 'costs.json'))
     dict_to_json(dict(sil_scores), osp.join(foldr, 'sil_scores.json'))
     plot_ks(list(costs.values()), foldr, 'costs', min_k, max_k)
