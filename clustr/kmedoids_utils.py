@@ -16,7 +16,7 @@ def calculate_kmedoids(data_mat,
     """
     cost = OrderedDict()
     sil_scores = OrderedDict()
-    for cluster in range(min_k, max_k):
+    for cluster in range(min_k, max_k+1):
         cobj = KMedoids(n_clusters=cluster, random_state=0, metric='cosine').fit(data_mat)
         print('Cluster initiation: {}'.format(cluster))
         labels = cobj.labels_

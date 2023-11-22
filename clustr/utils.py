@@ -204,7 +204,7 @@ def plot_ks(cost,
             max_k=10):
 
     """Plots the respective costs per K"""
-    df_cost = pd.DataFrame({'Cluster': range(min_k, max_k), 'Cost': cost})  # Data viz
+    df_cost = pd.DataFrame({'Cluster': range(min_k, max_k+1), 'Cost': cost})  # Data viz
     num_ks = max_k - min_k
     plotnine.options.figure_size = (int(num_ks * 8 / 9), 4.8)
     gg_obj = (

@@ -15,7 +15,7 @@ def calculate_kmodes(dfMatrix,
     """Gets an array of costs per K"""
     cost = OrderedDict()
     sil_scores = OrderedDict()
-    for cluster in range(min_k, max_k):
+    for cluster in range(min_k, max_k+1):
         kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, random_state=0)
         kmodes.fit_predict(dfMatrix)
         labels = kmodes.labels_
