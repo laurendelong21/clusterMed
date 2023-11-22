@@ -20,9 +20,9 @@ def select_lca_model(data_mat,
         bics[k] = lca.bic
     # Plot the BIC per K
     ks = list(bics.keys())
-    bics = list(bics.values())
+    bic_values = list(bics.values())
     _, ax = plt.subplots(figsize=(15, 5))
-    ax.plot(ks, bics, linewidth=3)
+    ax.plot(ks, bic_values, linewidth=3)
     ax.grid(True)
     ax.set_title("Model Selection Using BIC")
     ax.set_xlabel("k clusters")
