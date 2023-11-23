@@ -1,5 +1,6 @@
 import click
 import logging
+import os
 import os.path as osp
 from memory_profiler import profile
 from clustr.constants import PROCESSED_DATA
@@ -105,6 +106,8 @@ def lcaselect(gender: str,
               help="denotes whether to take full data (None), only 'men', or only 'women'")
 @click.option("-o", "--outfl", type=str, default=None,
               help="the file name to which the resulting file with cluster labels should be written")
+@click.option("-r", "--repetitions", type=int, default=1,
+              help="number of times to run the clustering method")
 @click.option("-k", "--kclusters", type=int, default=10,
               help="k clusters")
 @click.option("-s", "--sample_frac", type=float, default=1,
@@ -113,27 +116,38 @@ def lcaselect(gender: str,
               help="whether to drop those who have no conditions")
 def lca(gender: str,
         outfl: str,
+        repetitions: int = 1,
         kclusters: int = 10,
         sample_frac: float = 1,
         drop_healthy: bool = False):
     """Performs LCA clustering
     :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
     :param outfl: the file location at which the updated file with cluster labels should be saved
+    :param repetitions: number of times to run the clustering method
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
     """
-    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
+    df, mat, _, _, _ = get_data(sample_frac, drop_healthy, gender)
     if gender == 'men':
         foldr = LCA_MEN
     elif gender == 'women':
         foldr = LCA_WOMEN
     else:
         foldr = LCA_RESULTS
-    model, labels = get_lca_clusters(mat, foldr, kclusters)
-    df['lca_cluster_labels'] = labels
-    df.to_csv(osp.join(foldr, outfl), sep='\t')
-    plot_morbidity_dist(df, 'lca_cluster_labels', foldr, 'latent_class_analysis')
+    
+    # do r number of times:
+    for i in range(repetitions):
+        if repetitions != 1:
+            subfolder = osp.join(foldr, f'run_{i}')
+            if not osp.exists(subfolder):
+                os.makedirs(subfolder)
+        else:
+            subfolder = foldr
+        _, labels = get_lca_clusters(mat, foldr, kclusters)
+        df['lca_cluster_labels'] = labels
+        df.to_csv(osp.join(subfolder, outfl), sep='\t')
+        plot_morbidity_dist(df, 'lca_cluster_labels', subfolder, 'latent_class_analysis')
 
 
 @cli.command()
@@ -179,6 +193,8 @@ def kmeselect(gender: str,
               help="denotes whether to take full data (None), only 'men', or only 'women'")
 @click.option("-o", "--outfl", type=str, default=None,
               help="the file name to which the resulting file with cluster labels should be written")
+@click.option("-r", "--repetitions", type=int, default=1,
+              help="number of times to run the clustering method")
 @click.option("-k", "--kclusters", type=int, default=10,
               help="k clusters")
 @click.option("-s", "--sample_frac", type=float, default=1,
@@ -187,12 +203,14 @@ def kmeselect(gender: str,
               help="whether to drop those who have no conditions")
 def kmedoids(gender: str,
              outfl: str,
+             repetitions: int = 1,
              kclusters: int = 10,
              sample_frac: float = 1,
              drop_healthy: bool = False):
     """Performs KMedoids clustering
     :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
     :param outfl: the file location at which the updated file with cluster labels should be saved
+    :param repetitions: number of times to run the clustering method
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
@@ -204,10 +222,20 @@ def kmedoids(gender: str,
         foldr = KMEDOIDS_WOMEN
     else:
         foldr = KMEDOIDS_RESULTS
-    model, labels = fit_kmedoids(mat, foldr, cgrps, kclusters)
-    df['kmedoids_cluster_labels'] = labels
-    df.to_csv(osp.join(foldr, outfl), sep='\t')
-    plot_morbidity_dist(df, 'kmedoids_cluster_labels', foldr, 'kmedoids')
+
+    # do r number of times:
+    for i in range(repetitions):
+        if repetitions != 1:
+            subfolder = osp.join(foldr, f'run_{i}')
+            if not osp.exists(subfolder):
+                os.makedirs(subfolder)
+        else:
+            subfolder = foldr
+
+        _, labels = fit_kmedoids(mat, foldr, cgrps, kclusters)
+        df['kmedoids_cluster_labels'] = labels
+        df.to_csv(osp.join(subfolder, outfl), sep='\t')
+        plot_morbidity_dist(df, 'kmedoids_cluster_labels', subfolder, 'kmedoids')
 
 
 @cli.command()
@@ -253,6 +281,8 @@ def kmoselect(gender: str,
               help="denotes whether to take full data (None), only 'men', or only 'women'")
 @click.option("-o", "--outfl", type=str, default=None,
               help="the file name to which the resulting file with cluster labels should be written")
+@click.option("-r", "--repetitions", type=int, default=1,
+              help="number of times to run the clustering method")
 @click.option("-k", "--kclusters", type=int, default=10,
               help="k clusters")
 @click.option("-s", "--sample_frac", type=float, default=1,
@@ -261,24 +291,36 @@ def kmoselect(gender: str,
               help="whether to drop those who have no conditions")
 def kmodes(gender: str,
            outfl: str,
+           repetitions: int = 1,
            kclusters: int = 10,
            sample_frac: float = 1,
            drop_healthy: bool = False):
     """Performs KModes clustering
     :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
     :param outfl: the file location at which the updated file with cluster labels should be saved
+    :param repetitions: number of times to run the clustering method
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
     """
-    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
+    df, mat, _, _, cgrps = get_data(sample_frac, drop_healthy, gender)
     if gender == 'men':
         foldr = KMODES_MEN
     elif gender == 'women':
         foldr = KMODES_WOMEN
     else:
         foldr = KMODES_RESULTS
-    model, labels = fit_kmodes(mat, foldr, cgrps, kclusters)
-    df['kmodes_cluster_labels'] = labels
-    df.to_csv(osp.join(foldr, outfl), sep='\t')
-    plot_morbidity_dist(df, 'kmodes_cluster_labels', foldr, 'kmodes')
+
+    # do r number of times:
+    for i in range(repetitions):
+        if repetitions != 1:
+            subfolder = osp.join(foldr, f'run_{i}')
+            if not osp.exists(subfolder):
+                os.makedirs(subfolder)
+        else:
+            subfolder = foldr
+
+        model, labels = fit_kmodes(mat, foldr, cgrps, kclusters)
+        df['kmodes_cluster_labels'] = labels
+        df.to_csv(osp.join(subfolder, outfl), sep='\t')
+        plot_morbidity_dist(df, 'kmodes_cluster_labels', subfolder, 'kmodes')
