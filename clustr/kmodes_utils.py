@@ -42,7 +42,8 @@ def fit_kmodes(data_mat,
     labels = kmodes.labels_
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
-    dict_to_json({  # 'silhouette': sil_score,
+    sil_score = silhouette_score(data_mat, labels, metric='cosine')
+    dict_to_json({'silhouette': sil_score,
         'davies_boulden': db_score,
         'calinski_harabasz': ch_score},
         osp.join(out_folder, 'scores.json'))

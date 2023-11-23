@@ -1,5 +1,5 @@
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score
+from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
 import scipy.cluster.hierarchy as sch
 import scipy.spatial.distance as ssd
@@ -24,10 +24,11 @@ def get_agg_clusters(data_mat,
     model = AgglomerativeClustering(n_clusters=10, affinity='precomputed', linkage=linkage)
     model.fit(ssd.squareform(ssd.pdist(data_mat, metric=metric)))
     labels = model.labels_
-    # sil_score = silhouette_score(dist_mat, labels, metric='precomputed')
+    sil_score = silhouette_score(data_mat, labels, metric='cosine')
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
-    dict_to_json({'davies_boulden': db_score,
+    dict_to_json({'silhouette': sil_score,
+                  'davies_boulden': db_score,
                   'calinski_harabasz': ch_score},
                  osp.join(out_folder, 'scores.json'))
     return model, labels

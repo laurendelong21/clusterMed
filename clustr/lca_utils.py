@@ -3,7 +3,7 @@ from clustr.lca import LCA
 from clustr.utils import dict_to_json
 import os.path as osp
 import matplotlib.pyplot as plt
-from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score
+from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from collections import OrderedDict
 
 
@@ -45,7 +45,9 @@ def get_lca_clusters(data_mat,
     labels = lca.predict(data_mat)
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
-    dict_to_json({'davies_boulden': db_score,
+    sil_score = silhouette_score(data_mat, labels, metric='cosine')
+    dict_to_json({'silhouette': sil_score,
+                  'davies_boulden': db_score,
                   'calinski_harabasz': ch_score},
                  osp.join(out_folder, 'scores.json'))
     # TODO: use lca.predict_proba(data_mat) to get probabilities as well?
