@@ -24,7 +24,7 @@ def get_agg_clusters(data_mat,
     model = AgglomerativeClustering(n_clusters=10, affinity='precomputed', linkage=linkage)
     model.fit(ssd.squareform(ssd.pdist(data_mat, metric=metric)))
     labels = model.labels_
-    sil_score = silhouette_score(data_mat, labels, metric='cosine')
+    sil_score = silhouette_score(data_mat, labels, metric='jaccard')
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
     dict_to_json({'silhouette': sil_score,

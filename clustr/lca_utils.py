@@ -45,7 +45,7 @@ def get_lca_clusters(data_mat,
     labels = lca.predict(data_mat)
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
-    sil_score = silhouette_score(data_mat, labels, metric='cosine')
+    sil_score = silhouette_score(data_mat, labels, metric='jaccard')
     dict_to_json({'silhouette': sil_score,
                   'davies_boulden': db_score,
                   'calinski_harabasz': ch_score},

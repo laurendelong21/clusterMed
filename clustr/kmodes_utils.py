@@ -16,11 +16,12 @@ def calculate_kmodes(dfMatrix,
     cost = OrderedDict()
     sil_scores = OrderedDict()
     for cluster in range(min_k, max_k+1):
-        kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, random_state=0)
+        kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, cat_dissim='jaccard_dissim_label',
+                         n_init=1, random_state=0)
         kmodes.fit_predict(dfMatrix)
         labels = kmodes.labels_
         cost[cluster] = kmodes.cost_
-        sil_scores[cluster] = silhouette_score(dfMatrix, labels, metric='cosine')
+        sil_scores[cluster] = silhouette_score(dfMatrix, labels, metric='jaccard')
         print('Cluster initiation: {}'.format(cluster))
 
     return cost, sil_scores
@@ -37,12 +38,13 @@ def fit_kmodes(data_mat,
     :param k: the number k clusters
     :returns: the KModes model and the corresponding cluster labels
     """
-    kmodes = KModes(n_jobs=-1, n_clusters=k, init='Huang', random_state=0)
+    kmodes = KModes(n_jobs=-1, n_clusters=k, cat_dissim='jaccard_dissim_label',
+                    init='Huang', random_state=0, n_init=1)
     kmodes.fit_predict(data_mat)
     labels = kmodes.labels_
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
-    sil_score = silhouette_score(data_mat, labels, metric='cosine')
+    sil_score = silhouette_score(data_mat, labels, metric='jaccard')
     dict_to_json({'silhouette': sil_score,
         'davies_boulden': db_score,
         'calinski_harabasz': ch_score},
