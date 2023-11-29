@@ -1,4 +1,5 @@
 from kmodes.kmodes import KModes
+from kmodes.util.dissim import jaccard_dissim_label
 from typing import List
 import os.path as osp
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
@@ -16,7 +17,7 @@ def calculate_kmodes(dfMatrix,
     cost = OrderedDict()
     sil_scores = OrderedDict()
     for cluster in range(min_k, max_k+1):
-        kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, cat_dissim='jaccard_dissim_label',
+        kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, cat_dissim=jaccard_dissim_label,
                          n_init=1, random_state=0)
         kmodes.fit_predict(dfMatrix)
         labels = kmodes.labels_
@@ -38,7 +39,7 @@ def fit_kmodes(data_mat,
     :param k: the number k clusters
     :returns: the KModes model and the corresponding cluster labels
     """
-    kmodes = KModes(n_jobs=-1, n_clusters=k, cat_dissim='jaccard_dissim_label',
+    kmodes = KModes(n_jobs=-1, n_clusters=k, cat_dissim=jaccard_dissim_label,
                     init='Huang', random_state=0, n_init=1)
     kmodes.fit_predict(data_mat)
     labels = kmodes.labels_
