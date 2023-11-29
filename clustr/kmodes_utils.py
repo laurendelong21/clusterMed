@@ -17,13 +17,16 @@ def calculate_kmodes(dfMatrix,
     cost = OrderedDict()
     sil_scores = OrderedDict()
     for cluster in range(min_k, max_k+1):
+        print('Cluster initiation: {}'.format(cluster))
         kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, cat_dissim=jaccard_dissim_label,
                          n_init=1, random_state=0)
         kmodes.fit_predict(dfMatrix)
         labels = kmodes.labels_
         cost[cluster] = kmodes.cost_
-        sil_scores[cluster] = silhouette_score(dfMatrix, labels, metric='jaccard')
-        print('Cluster initiation: {}'.format(cluster))
+        try:
+            sil_scores[cluster] = silhouette_score(dfMatrix, labels, metric='jaccard')
+        except ValueError:
+            sil_scores[cluster] = -1
 
     return cost, sil_scores
 
