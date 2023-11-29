@@ -21,7 +21,10 @@ def calculate_kmedoids(data_mat,
         print('Cluster initiation: {}'.format(cluster))
         labels = cobj.labels_
         cost[cluster] = cobj.inertia_
-        sil_scores[cluster] = silhouette_score(data_mat, labels, metric='jaccard')
+        try:
+            sil_scores[cluster] = silhouette_score(data_mat, labels, metric='jaccard')
+        except ValueError:
+            sil_scores[cluster] = -1
 
     return cost, sil_scores
 
