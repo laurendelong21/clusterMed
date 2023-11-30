@@ -1,5 +1,5 @@
 from kmodes.kmodes import KModes
-from kmodes.util.dissim import jaccard_dissim_label
+# from kmodes.util.dissim import jaccard_dissim_label
 from typing import List
 import os.path as osp
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
@@ -18,13 +18,13 @@ def calculate_kmodes(dfMatrix,
     sil_scores = OrderedDict()
     for cluster in range(min_k, max_k+1):
         print('Cluster initiation: {}'.format(cluster))
-        kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric, cat_dissim=jaccard_dissim_label,
+        kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric,
                          n_init=1, random_state=0)
         kmodes.fit_predict(dfMatrix)
         labels = kmodes.labels_
         cost[cluster] = kmodes.cost_
         try:
-            sil_scores[cluster] = silhouette_score(dfMatrix, labels, metric='jaccard')
+            sil_scores[cluster] = silhouette_score(dfMatrix, labels, metric='hamming')
         except ValueError:
             sil_scores[cluster] = -1
 
@@ -42,13 +42,13 @@ def fit_kmodes(data_mat,
     :param k: the number k clusters
     :returns: the KModes model and the corresponding cluster labels
     """
-    kmodes = KModes(n_jobs=-1, n_clusters=k, cat_dissim=jaccard_dissim_label,
+    kmodes = KModes(n_jobs=-1, n_clusters=k,
                     init='Huang', random_state=0, n_init=1)
     kmodes.fit_predict(data_mat)
     labels = kmodes.labels_
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
-    sil_score = silhouette_score(data_mat, labels, metric='jaccard')
+    sil_score = silhouette_score(data_mat, labels, metric='hamming')
     dict_to_json({'silhouette': sil_score,
         'davies_boulden': db_score,
         'calinski_harabasz': ch_score},
