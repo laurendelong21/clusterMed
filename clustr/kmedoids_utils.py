@@ -17,7 +17,7 @@ def calculate_kmedoids(data_mat,
     cost = OrderedDict()
     sil_scores = OrderedDict()
     for cluster in range(min_k, max_k+1):
-        cobj = KMedoids(n_clusters=cluster, random_state=0, metric='hamming').fit(data_mat)
+        cobj = KMedoids(n_clusters=cluster, random_state=0, metric='cosine').fit(data_mat)
         print('Cluster initiation: {}'.format(cluster))
         labels = cobj.labels_
         cost[cluster] = cobj.inertia_
@@ -41,7 +41,7 @@ def fit_kmedoids(data_mat,
     :param k: the number k clusters
     :returns: the KMedoids model and the corresponding cluster labels
     """
-    cobj = KMedoids(n_clusters=k, random_state=0, metric='hamming').fit(data_mat)
+    cobj = KMedoids(n_clusters=k, random_state=0, metric='cosine').fit(data_mat)
     labels = cobj.labels_
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)
