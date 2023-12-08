@@ -144,7 +144,7 @@ def lca(gender: str,
                 os.makedirs(subfolder)
         else:
             subfolder = foldr
-        _, labels = get_lca_clusters(mat, foldr, kclusters)
+        _, labels = get_lca_clusters(mat, subfolder, kclusters)
         df['lca_cluster_labels'] = labels
         df.to_csv(osp.join(subfolder, outfl), sep='\t')
         plot_morbidity_dist(df, 'lca_cluster_labels', subfolder, 'latent_class_analysis')
@@ -232,7 +232,7 @@ def kmedoids(gender: str,
         else:
             subfolder = foldr
 
-        _, labels = fit_kmedoids(mat, foldr, cgrps, kclusters)
+        _, labels = fit_kmedoids(mat, subfolder, cgrps, kclusters)
         df['kmedoids_cluster_labels'] = labels
         df.to_csv(osp.join(subfolder, outfl), sep='\t')
         plot_morbidity_dist(df, 'kmedoids_cluster_labels', subfolder, 'kmedoids')
@@ -320,7 +320,7 @@ def kmodes(gender: str,
         else:
             subfolder = foldr
 
-        model, labels = fit_kmodes(mat, foldr, cgrps, kclusters)
+        model, labels = fit_kmodes(mat, subfolder, cgrps, kclusters)
         df['kmodes_cluster_labels'] = labels
         df.to_csv(osp.join(subfolder, outfl), sep='\t')
         plot_morbidity_dist(df, 'kmodes_cluster_labels', subfolder, 'kmodes')
