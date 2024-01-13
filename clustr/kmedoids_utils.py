@@ -41,7 +41,7 @@ def fit_kmedoids(data_mat,
     :param k: the number k clusters
     :returns: the KMedoids model and the corresponding cluster labels
     """
-    cobj = KMedoids(n_clusters=k, random_state=0, metric='cosine').fit(data_mat)
+    cobj = KMedoids(n_clusters=k, random_state=None, metric='cosine').fit(data_mat)
     labels = cobj.labels_
     db_score = davies_bouldin_score(data_mat, labels)
     ch_score = calinski_harabasz_score(data_mat, labels)

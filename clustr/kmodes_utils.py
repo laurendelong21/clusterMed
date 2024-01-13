@@ -43,7 +43,7 @@ def fit_kmodes(data_mat,
     :returns: the KModes model and the corresponding cluster labels
     """
     kmodes = KModes(n_jobs=-1, n_clusters=k,
-                    init='Huang', random_state=0, n_init=1)
+                    init='Huang', random_state=None, n_init=1)
     kmodes.fit_predict(data_mat)
     labels = kmodes.labels_
     db_score = davies_bouldin_score(data_mat, labels)
