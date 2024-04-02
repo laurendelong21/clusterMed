@@ -1,9 +1,13 @@
 import os.path as osp
 from typing import List
 from sklearn_extra.cluster import KMedoids
+from clustr.startup import STARTUP_MSG
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
 from collections import OrderedDict
+
+
+print(STARTUP_MSG)
 
 
 def calculate_kmedoids(data_mat,

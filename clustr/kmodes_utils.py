@@ -1,5 +1,5 @@
 from kmodes.kmodes import KModes
-# from kmodes.util.dissim import jaccard_dissim_label
+from clustr.startup import STARTUP_MSG
 from typing import List
 import os.path as osp
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
@@ -7,6 +7,9 @@ from clustr.utils import dict_to_json
 import matplotlib.pyplot as plt
 import pandas as pd
 from collections import OrderedDict
+
+
+print(STARTUP_MSG)
 
 
 def calculate_kmodes(dfMatrix,

@@ -12,7 +12,10 @@ import json
 import os.path as osp
 from scipy.stats import fisher_exact
 from statsmodels.stats.multitest import multipletests
-from clustr.constants import GP_DATA, GP_DATA_MEN, GP_DATA_WOMEN
+from clustr.startup import STARTUP_MSG
+
+
+print(STARTUP_MSG)
 
 
 def dict_to_json(d: Dict[Any, Any],
@@ -28,7 +31,7 @@ def get_top_cluster_conds(df: pd.DataFrame,
                           cluster_no: int):
     """Gets the condition frequencies for a certain cluster
     :param df: the dataframe being operated upon
-    :param cgrps: the list of condition groups
+    :param cgrps: the list of conditions
     :param cluster_labels: the column name containing the cluster labels
     :param cluster_no: the cluster number to select"""
     clstr = df.loc[df[cluster_labels] == cluster_no]
@@ -42,7 +45,7 @@ def get_adjusted_cluster_conds(df: pd.DataFrame,
                                cluster_no: int):
     """Gets the adjusted relative condition frequencies for a certain cluster
     :param df: the dataframe being operated upon
-    :param cgrps: the list of condition groups
+    :param cgrps: the list of conditions
     :param cluster_labels: the column name containing the cluster labels
     :param cluster_no: the cluster number to select"""
     clus_morbs = get_top_cluster_conds(df, cgrps, cluster_labels, cluster_no)
@@ -179,24 +182,6 @@ def plot_morbidity_dist(df: pd.DataFrame,
     plt.savefig(osp.join(outfolder, f'{clustering_method}_boxplot.png'), dpi=300, bbox_inches='tight')
 
 
-def plot_depression(df: pd.DataFrame,
-                    labels_column: str,
-                    depression_column: str,
-                    clustering_method: str):
-    """Plots depression breakdown per cluster"""
-    labs = df[labels_column].unique()
-    labs.sort()
-    counts = df[[labels_column, depression_column]].groupby(
-        [depression_column, labels_column]).value_counts().unstack(fill_value=0).stack()
-    plt.bar(labs, counts[1], bottom=None, color='blue', label='Depression')
-    plt.bar(labs, counts[0], bottom=counts[1], color='pink', label='No Depression')
-    plt.legend()
-    plt.xlabel(f'{clustering_method} Cluster Labels')
-    plt.ylabel('Number in each cluster')
-    # TODO: savefig
-    # TODO: add percentages
-
-
 def plot_ks(cost,
             out_folder,
             metric='costs',
@@ -226,40 +211,43 @@ def plot_ks(cost,
     gg_obj.save(filename=osp.join(out_folder, f'model_selection_{metric}.png'), dpi=300)
 
 
-def get_data(sample_frac: float = 1,
+def get_data(input_file,
+             sample_frac: float = 1,
              drop_healthy: bool = False,
-             gender: str = None):
+             coi=None):
     """Gets the data and returns it as a numpy matrix without the depression column.
+    :param input_file: the file containing the data, in which columns are conditions, 
+            rows are patients, and values are binary
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
-    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
+    :param coi: the conditions of interest; these columns are removed from the data for clustering
+                and stored/returned separately; if None, all conditions are used.
+                Should be a string or a list of strings (List[str])
     :returns: dataframe of the data,
                 numpy matrix of features,
                 patient ids,
-                depression labels, &
-                feature column names
+                the excluded condition values, &
+                condition names
     """
-    if gender == 'men':
-        df = pd.read_csv(GP_DATA_MEN, sep='\t', index_col=0)
-    elif gender == 'women':
-        df = pd.read_csv(GP_DATA_WOMEN, sep='\t', index_col=0)
-    else:
-        df = pd.read_csv(GP_DATA, sep='\t', index_col=0)
+    df = pd.read_csv(input_file, sep='\t', index_col=0)
     # Subset the data if necessary
     df = df.sample(frac=sample_frac, random_state=1)
     # Get patient IDs
     pat_ids = list(df.index)
-    # Take out depression column
-    labs = df['Depression']
-    df.drop(['Depression'], axis=1, inplace=True)
+    # Take out excluded condition(s) of interest
+    exclusions = None
+    if coi:
+        exclusions = df[coi]
+        coi = [coi] if type(coi) != list else coi  ##  if coi is a string, make it a list
+        df.drop(coi, axis=1, inplace=True)
     # Drop those with no multimorbidities if drop_healthy==True
     if drop_healthy:
         df = df.loc[df.sum(numeric_only=True, axis=1) != 0]
-    # Get column names (condition groups)
+    # Get column names (conditions)
     cgrps = list(df.columns)
     # Convert dataframe to matrix
     mat = df.to_numpy()
     # Get total conditions column for later
     df['tot_conditions'] = df[cgrps].sum(numeric_only=True, axis=1)
-    return df, mat, pat_ids, labs, cgrps
+    return df, mat, pat_ids, exclusions, cgrps
 

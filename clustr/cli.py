@@ -26,10 +26,10 @@ def cli():
 
 @profile
 @cli.command()
-@click.option("-g", "--gender", type=str, default=None,
-              help="denotes whether to take full data (None), only 'men', or only 'women'")
-@click.option("-o", "--outfl", type=str, default=None,
-              help="the file name to which the resulting file with cluster labels should be written")
+@click.option("-i", "--infile", type=str, default=None,
+              help="the input filepath; recommended to store within the 'data' directory")
+@click.option("-b", "--subdir", type=str, default=None,
+              help="denotes a subdirectory to create and write to, such as 'women'")
 @click.option("-m", "--metric", type=str, default='hamming',
               help="the metric to be used for clustering")
 @click.option("-l", "--linkage", type=str, default='complete',
@@ -38,37 +38,39 @@ def cli():
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def agg(gender: str,
-        outfl: str,
+@click.option("-c", "--coi", type=str, default=None,
+              help="the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis")
+def agg(infile: str,
+        subdir: str,
         metric: str = 'hamming',
         linkage: str = 'complete',
         sample_frac: float = 1,
-        drop_healthy: bool = False):
+        drop_healthy: bool = False,
+        coi=None):
     """Hierarchical agglomerative clustering from command line
-    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
-    :param outfl: the file location at which the updated file with cluster labels should be saved
+    :param infile: the input filepath; recommended to store within the 'data' directory
+    :param subdir: denotes a subdirectory to create and write
     :param metric: the metric type used for clustering; default is hamming distance
     :param linkage: linkage method; default is complete
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
-    :param drop_healthy: boolean value indicating whether to drop those with no conditions
+    :param drop_healthy: boolean value indicating whether to drop those with no conditions,
+    :param coi: the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis
     """
-    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
-    if gender == 'men':
-        foldr = AGG_MEN
-    elif gender == 'women':
-        foldr = AGG_WOMEN
-    else:
-        foldr = HIER_AGG_RESULTS
-    model, labels = get_agg_clusters(mat, foldr, metric, linkage)
+    df, mat, _, _, _ = get_data(infile, sample_frac, drop_healthy, coi)
+    foldr = osp.join(HIER_AGG_RESULTS, subdir) if subdir else HIER_AGG_RESULTS
+    os.makedirs(foldr, exist_ok=True)
+    _, labels = get_agg_clusters(mat, foldr, metric, linkage)
     plot_dendrogram(mat, foldr, metric, linkage)
     df['aggl_cluster_labels'] = labels
-    df.to_csv(osp.join(foldr, outfl), sep='\t')
+    df.to_csv(osp.join(foldr, 'hier_agg_labels.tsv'), sep='\t')
     plot_morbidity_dist(df, 'aggl_cluster_labels', foldr, 'agglomerative_hierarchical')
 
 
 @cli.command()
-@click.option("-g", "--gender", type=str, default=None,
-              help="denotes whether to take full data (None), only 'men', or only 'women'")
+@click.option("-i", "--infile", type=str, default=None,
+              help="the input filepath; recommended to store within the 'data' directory")
+@click.option("-b", "--subdir", type=str, default=None,
+              help="denotes a subdirectory to create and write to, such as 'women'")
 @click.option("-mi", "--min_k", type=int, default=2,
               help="the minimum number k clusters to investigate")
 @click.option("-ma", "--max_k", type=int, default=10,
@@ -77,35 +79,37 @@ def agg(gender: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def lcaselect(gender: str,
+@click.option("-c", "--coi", type=str, default=None,
+              help="the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis")
+def lcaselect(infile: str,
+              subdir: str,
               min_k: int = 2,
               max_k: int = 10,
               sample_frac: float = 1,
-              drop_healthy: bool = False
+              drop_healthy: bool = False,
+              coi=None
               ):
     """Helps facilitate model selection for LCA using BIC criterion
-    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
+    :param infile: the input filepath; recommended to store within the 'data' directory
+    :param subdir: denotes a subdirectory to create and write
     :param min_k: the minimum number k clusters to investigate
     :param max_k: the maximum number k clusters to investigate
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
+    :param coi: the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis
     """
-    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
-    if gender == 'men':
-        foldr = LCA_MEN
-    elif gender == 'women':
-        foldr = LCA_WOMEN
-    else:
-        foldr = LCA_RESULTS
+    _, mat, _, _, _ = get_data(infile, sample_frac, drop_healthy, coi)
+    foldr = osp.join(LCA_RESULTS, subdir) if subdir else LCA_RESULTS
+    os.makedirs(foldr, exist_ok=True)
     bics = select_lca_model(mat, foldr, min_k, max_k)
     dict_to_json(bics, osp.join(foldr, 'bics.json'))
 
 
 @cli.command()
-@click.option("-g", "--gender", type=str, default=None,
-              help="denotes whether to take full data (None), only 'men', or only 'women'")
-@click.option("-o", "--outfl", type=str, default=None,
-              help="the file name to which the resulting file with cluster labels should be written")
+@click.option("-i", "--infile", type=str, default=None,
+              help="the input filepath; recommended to store within the 'data' directory")
+@click.option("-b", "--subdir", type=str, default=None,
+              help="denotes a subdirectory to create and write to, such as 'women'")
 @click.option("-r", "--repetitions", type=int, default=1,
               help="number of times to run the clustering method")
 @click.option("-k", "--kclusters", type=int, default=10,
@@ -114,45 +118,46 @@ def lcaselect(gender: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def lca(gender: str,
-        outfl: str,
+@click.option("-c", "--coi", type=str, default=None,
+              help="the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis")
+def lca(infile: str,
+        subdir: str,
         repetitions: int = 1,
         kclusters: int = 10,
         sample_frac: float = 1,
-        drop_healthy: bool = False):
+        drop_healthy: bool = False,
+        coi=None):
     """Performs LCA clustering
-    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
-    :param outfl: the file location at which the updated file with cluster labels should be saved
+    :param infile: the input filepath; recommended to store within the 'data' directory
+    :param subdir: denotes a subdirectory to create and write
     :param repetitions: number of times to run the clustering method
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
-    :param drop_healthy: boolean value indicating whether to drop those with no conditions
+    :param drop_healthy: boolean value indicating whether to drop those with no conditions,
+    :param coi: the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis
     """
-    df, mat, _, _, _ = get_data(sample_frac, drop_healthy, gender)
-    if gender == 'men':
-        foldr = LCA_MEN
-    elif gender == 'women':
-        foldr = LCA_WOMEN
-    else:
-        foldr = LCA_RESULTS
+    df, mat, _, _, _ = get_data(infile, sample_frac, drop_healthy, coi)
+    foldr = osp.join(LCA_RESULTS, subdir) if subdir else LCA_RESULTS
     
     # do r number of times:
     for i in range(repetitions):
         if repetitions != 1:
             subfolder = osp.join(foldr, f'run_{i}')
-            if not osp.exists(subfolder):
-                os.makedirs(subfolder)
         else:
             subfolder = foldr
+        
+        os.makedirs(subfolder, exist_ok=True)
         _, labels = get_lca_clusters(mat, subfolder, kclusters)
         df['lca_cluster_labels'] = labels
-        df.to_csv(osp.join(subfolder, outfl), sep='\t')
+        df.to_csv(osp.join(subfolder, 'lca_cluster_labels.tsv'), sep='\t')
         plot_morbidity_dist(df, 'lca_cluster_labels', subfolder, 'latent_class_analysis')
 
 
 @cli.command()
-@click.option("-g", "--gender", type=str, default=None,
-              help="denotes whether to take full data (None), only 'men', or only 'women'")
+@click.option("-i", "--infile", type=str, default=None,
+              help="the input filepath; recommended to store within the 'data' directory")
+@click.option("-b", "--subdir", type=str, default=None,
+              help="denotes a subdirectory to create and write to, such as 'women'")
 @click.option("-mi", "--min_k", type=int, default=2,
               help="the minimum number k clusters to investigate")
 @click.option("-ma", "--max_k", type=int, default=10,
@@ -161,26 +166,28 @@ def lca(gender: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def kmeselect(gender: str,
+@click.option("-c", "--coi", type=str, default=None,
+              help="the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis")
+def kmeselect(infile: str,
+              subdir: str,
               min_k: int = 2,
               max_k: int = 10,
               sample_frac: float = 1,
-              drop_healthy: bool = False
+              drop_healthy: bool = False,
+              coi: str = None
               ):
     """Helps facilitate model selection for LCA using BIC criterion
-    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
+    :param infile: the input filepath; recommended to store within the 'data' directory
+    :param subdir: denotes a subdirectory to create and write
     :param min_k: the minimum number k clusters to investigate
     :param max_k: the maximum number k clusters to investigate
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
+    :param coi: the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis
     """
-    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
-    if gender == 'men':
-        foldr = KMEDOIDS_MEN
-    elif gender == 'women':
-        foldr = KMEDOIDS_WOMEN
-    else:
-        foldr = KMEDOIDS_RESULTS
+    _, mat, _, _, _ = get_data(infile, sample_frac, drop_healthy, coi)
+    foldr = osp.join(KMEDOIDS_RESULTS, subdir) if subdir else KMEDOIDS_RESULTS
+    os.makedirs(foldr, exist_ok=True)
     costs, sil_scores = calculate_kmedoids(mat, min_k, max_k)
     dict_to_json(dict(costs), osp.join(foldr, 'costs.json'))
     dict_to_json(dict(sil_scores), osp.join(foldr, 'sil_scores.json'))
@@ -189,10 +196,10 @@ def kmeselect(gender: str,
 
 
 @cli.command()
-@click.option("-g", "--gender", type=str, default=None,
-              help="denotes whether to take full data (None), only 'men', or only 'women'")
-@click.option("-o", "--outfl", type=str, default=None,
-              help="the file name to which the resulting file with cluster labels should be written")
+@click.option("-i", "--infile", type=str, default=None,
+              help="the input filepath; recommended to store within the 'data' directory")
+@click.option("-b", "--subdir", type=str, default=None,
+              help="denotes a subdirectory to create and write to, such as 'women'")
 @click.option("-r", "--repetitions", type=int, default=1,
               help="number of times to run the clustering method")
 @click.option("-k", "--kclusters", type=int, default=10,
@@ -201,46 +208,47 @@ def kmeselect(gender: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def kmedoids(gender: str,
-             outfl: str,
+@click.option("-c", "--coi", type=str, default=None,
+              help="the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis")
+def kmedoids(infile: str,
+             subdir: str,
              repetitions: int = 1,
              kclusters: int = 10,
              sample_frac: float = 1,
-             drop_healthy: bool = False):
+             drop_healthy: bool = False,
+             coi: str = None):
     """Performs KMedoids clustering
-    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
-    :param outfl: the file location at which the updated file with cluster labels should be saved
+    :param infile: the input filepath; recommended to store within the 'data' directory
+    :param subdir: denotes a subdirectory to create and write
     :param repetitions: number of times to run the clustering method
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
+    :param coi: the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis
     """
-    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
-    if gender == 'men':
-        foldr = KMEDOIDS_MEN
-    elif gender == 'women':
-        foldr = KMEDOIDS_WOMEN
-    else:
-        foldr = KMEDOIDS_RESULTS
+    df, mat, _, _, cgrps = get_data(infile, sample_frac, drop_healthy, coi)
+    foldr = osp.join(KMEDOIDS_RESULTS, subdir) if subdir else KMEDOIDS_RESULTS
 
     # do r number of times:
     for i in range(repetitions):
         if repetitions != 1:
             subfolder = osp.join(foldr, f'run_{i}')
-            if not osp.exists(subfolder):
-                os.makedirs(subfolder)
         else:
             subfolder = foldr
+        
+        os.makedirs(subfolder, exist_ok=True)
 
         _, labels = fit_kmedoids(mat, subfolder, cgrps, kclusters)
         df['kmedoids_cluster_labels'] = labels
-        df.to_csv(osp.join(subfolder, outfl), sep='\t')
+        df.to_csv(osp.join(subfolder, 'kmedoids_cluster_labels.tsv'), sep='\t')
         plot_morbidity_dist(df, 'kmedoids_cluster_labels', subfolder, 'kmedoids')
 
 
 @cli.command()
-@click.option("-g", "--gender", type=str, default=None,
-              help="denotes whether to take full data (None), only 'men', or only 'women'")
+@click.option("-i", "--infile", type=str, default=None,
+              help="the input filepath; recommended to store within the 'data' directory")
+@click.option("-b", "--subdir", type=str, default=None,
+              help="denotes a subdirectory to create and write to, such as 'women'")
 @click.option("-mi", "--min_k", type=int, default=2,
               help="the minimum number k clusters to investigate")
 @click.option("-ma", "--max_k", type=int, default=10,
@@ -249,26 +257,28 @@ def kmedoids(gender: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def kmoselect(gender: str,
+@click.option("-c", "--coi", type=str, default=None,
+              help="the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis")
+def kmoselect(infile: str,
+              subdir: str,
               min_k: int = 2,
               max_k: int = 10,
               sample_frac: float = 1,
-              drop_healthy: bool = False
+              drop_healthy: bool = False,
+              coi: str = None
               ):
     """Helps facilitate model selection for LCA using BIC criterion
-    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
+    :param infile: the input filepath; recommended to store within the 'data' directory
+    :param subdir: denotes a subdirectory to create and write
     :param min_k: the minimum number k clusters to investigate
     :param max_k: the maximum number k clusters to investigate
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
+    :param coi: the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis
     """
-    df, mat, pat_ids, labs, cgrps = get_data(sample_frac, drop_healthy, gender)
-    if gender == 'men':
-        foldr = KMODES_MEN
-    elif gender == 'women':
-        foldr = KMODES_WOMEN
-    else:
-        foldr = KMODES_RESULTS
+    _, mat, _, _, _ = get_data(infile, sample_frac, drop_healthy, coi)
+    foldr = osp.join(KMODES_RESULTS, subdir) if subdir else KMODES_RESULTS
+    os.makedirs(foldr, exist_ok=True)
     costs, sil_scores = calculate_kmodes(mat, min_k, max_k)
     dict_to_json(dict(costs), osp.join(foldr, 'costs.json'))
     dict_to_json(dict(sil_scores), osp.join(foldr, 'sil_scores.json'))
@@ -277,10 +287,10 @@ def kmoselect(gender: str,
 
 
 @cli.command()
-@click.option("-g", "--gender", type=str, default=None,
-              help="denotes whether to take full data (None), only 'men', or only 'women'")
-@click.option("-o", "--outfl", type=str, default=None,
-              help="the file name to which the resulting file with cluster labels should be written")
+@click.option("-i", "--infile", type=str, default=None,
+              help="the input filepath; recommended to store within the 'data' directory")
+@click.option("-b", "--subdir", type=str, default=None,
+              help="denotes a subdirectory to create and write to, such as 'women'")
 @click.option("-r", "--repetitions", type=int, default=1,
               help="number of times to run the clustering method")
 @click.option("-k", "--kclusters", type=int, default=10,
@@ -289,38 +299,37 @@ def kmoselect(gender: str,
               help="the fraction of the dataset to use")
 @click.option("-dh", "--drop_healthy", type=bool, default=False,
               help="whether to drop those who have no conditions")
-def kmodes(gender: str,
-           outfl: str,
+@click.option("-c", "--coi", type=str, default=None,
+              help="the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis")
+def kmodes(infile: str,
+           subdir: str,
            repetitions: int = 1,
            kclusters: int = 10,
            sample_frac: float = 1,
-           drop_healthy: bool = False):
+           drop_healthy: bool = False,
+           coi: str = None):
     """Performs KModes clustering
-    :param gender: None, 'men', or 'women' denotes whether to take full data, only men, or only women.
-    :param outfl: the file location at which the updated file with cluster labels should be saved
+    :param infile: the input filepath; recommended to store within the 'data' directory
+    :param subdir: denotes a subdirectory to create and write
     :param repetitions: number of times to run the clustering method
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
+    :param coi: the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis
     """
-    df, mat, _, _, cgrps = get_data(sample_frac, drop_healthy, gender)
-    if gender == 'men':
-        foldr = KMODES_MEN
-    elif gender == 'women':
-        foldr = KMODES_WOMEN
-    else:
-        foldr = KMODES_RESULTS
+    df, mat, _, _, cgrps = get_data(infile, sample_frac, drop_healthy, coi)
+    foldr = osp.join(KMODES_RESULTS, subdir) if subdir else KMODES_RESULTS
 
     # do r number of times:
     for i in range(repetitions):
         if repetitions != 1:
             subfolder = osp.join(foldr, f'run_{i}')
-            if not osp.exists(subfolder):
-                os.makedirs(subfolder)
         else:
             subfolder = foldr
+            
+        os.makedirs(subfolder, exist_ok=True)
 
         model, labels = fit_kmodes(mat, subfolder, cgrps, kclusters)
         df['kmodes_cluster_labels'] = labels
-        df.to_csv(osp.join(subfolder, outfl), sep='\t')
+        df.to_csv(osp.join(subfolder, 'kmodes_cluster_labels.tsv'), sep='\t')
         plot_morbidity_dist(df, 'kmodes_cluster_labels', subfolder, 'kmodes')

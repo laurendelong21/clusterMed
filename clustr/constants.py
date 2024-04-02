@@ -10,14 +10,11 @@ LOGS = osp.join(CACHE, 'logs')
 
 # MAIN DIRS
 MAIN_DIR = osp.dirname(osp.realpath(__file__))
-PROJECT_DIR = '/exports/csce/eddie/inf/groups/AIML/MRC_UKB/'
+PROJECT_DIR = osp.abspath(osp.join(MAIN_DIR, os.pardir))
 
-DATA = osp.join(PROJECT_DIR, 'data')
-PROCESSED_DATA = osp.join(DATA, 'processed_LD')
-GP_DATA = osp.join(PROCESSED_DATA, 'gp_mmorbs.tsv')
-GP_DATA_MEN = osp.join(PROCESSED_DATA, 'gp_mmorbs_men.tsv')
-GP_DATA_WOMEN = osp.join(PROCESSED_DATA, 'gp_mmorbs_women.tsv')
+DATA_DIR = osp.join(PROJECT_DIR, 'data')
 
+# CREATE FOLDERS FOR RESULTS
 RESULTS = osp.join(PROJECT_DIR, 'results')
 
 HIER_AGG_RESULTS = osp.join(RESULTS, 'hier_agg')
@@ -35,6 +32,4 @@ KMODES_WOMEN = osp.join(KMODES_RESULTS, 'women')
 LCA_RESULTS = osp.join(RESULTS, 'lca')
 LCA_MEN = osp.join(LCA_RESULTS, 'men')
 LCA_WOMEN = osp.join(LCA_RESULTS, 'women')
-
-BERNOULLI_RESULTS = osp.join(RESULTS, 'bernoulli')
 

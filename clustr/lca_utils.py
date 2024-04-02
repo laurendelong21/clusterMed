@@ -1,10 +1,14 @@
 from scipy import stats
 from clustr.lca import LCA
+from clustr.startup import STARTUP_MSG
 from clustr.utils import dict_to_json
 import os.path as osp
 import matplotlib.pyplot as plt
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from collections import OrderedDict
+
+
+print(STARTUP_MSG)
 
 
 def select_lca_model(data_mat,

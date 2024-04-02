@@ -1,11 +1,15 @@
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
+from clustr.startup import STARTUP_MSG
 import scipy.cluster.hierarchy as sch
 import scipy.spatial.distance as ssd
 import matplotlib.pyplot as plt
 import os.path as osp
 import sys
+
+
+print(STARTUP_MSG)
 
 
 sys.setrecursionlimit(100000)
