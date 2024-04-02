@@ -23,7 +23,7 @@ test_requirements = ['pytest>=3', ]
 setup(
     author="Lauren Nicole DeLong",
     author_email='l.n.delong@sms.ed.ac.uk',
-    python_requires='>=3.10',
+    python_requires='>=3.9',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
