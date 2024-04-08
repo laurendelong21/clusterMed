@@ -20,12 +20,10 @@ if [[ ! -d "$output_directory" ]]; then
 fi
 
 # Generate header row
-header=""
+header="index"
 for ((i=1; i<=$columns; i++)); do
+    header+=$'\t'
     header+="disease_$i"
-    if [[ $i -ne $columns ]]; then
-        header+=$'\t'
-    fi
 done
 
 # Write header to file
@@ -33,12 +31,10 @@ echo "$header" > "$output_directory/dummy_data.tsv"
 
 # Generate data rows
 for ((j=1; j<=$rows; j++)); do
-    row=""
+    row="$j"
     for ((k=1; k<=$columns; k++)); do
+        row+=$'\t'
         row+="$(generate_random_binary)"
-        if [[ $k -ne $columns ]]; then
-            row+=$'\t'
-        fi
     done
     echo "$row" >> "$output_directory/dummy_data.tsv"
 done
