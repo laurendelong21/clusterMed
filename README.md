@@ -28,6 +28,7 @@ create and activate a Python environment (replace `$ENV_NAME$` with your desired
 <br>
 
 ### File format
+<a name="data"></a>
 
 This package operates upon [tab-separated files](https://en.wikipedia.org/wiki/Tab-separated_values) (.tsv).
 
@@ -68,4 +69,154 @@ Using your environment as the kernel, use the notebook. Be careful with changing
 
 These clustering methods can be computationally expensive for many participants and conditions. You may want to run these on a remote server with a CLI.
 
-To use the CLI,
+To use the CLI, you only need the `clustr` package installed.
+
+Use one of the commands, following the command `cli`.
+
+Read further for options and examples.
+
+<br>
+
+**Commands Available:**
+
+| 	command		    | 	description								                                               |
+|---------------|--------------------------------------------------------------------|
+| 	agg		      | 	Performs agglomerative hierarchical clustering on an input file.             |
+| 	lcaselect	      | 	Helps facilitate model selection for LCA using BIC criterion.           |
+| 	lca	     | 	Performs Latent Class Analysis on an input file.	 |     |
+| 	kmeselect	     | 	Helps facilitate model selection for *k*-medoids using silhouette score.	 |     |
+| 	kmedoids	     | 	Performs *k*-medoids clustering on an input file.	 |     |
+| 	kmoselect	     | 	Helps facilitate model selection for *k*-modes using silhouette score.	 |     |
+| 	kmodes	     | 	Performs *k*-modes clustering on an input file.	 |     |
+
+<br>
+
+**agg**
+
+ Performs agglomerative hierarchical clustering on an input file. The input file *must* be in the [specified format](#data). Use `cli agg --help` for more details.
+
+| option            | 	description                             		                                             |
+|-------------------|-----------------------------------------------------------------------------------------|
+| -i / --infile    | 	the input filepath; recommended to store within the 'data' directory	       |
+| -b / --subdir    | 	denotes a subdirectory to create and write to, such as 'women'	       |
+| -m / --metric    | 	the metric to be used for clustering (default is hamming distance)	       |
+| -l / --linkage    | 	the type of linkage to be used for clustering (default is complete)	       |
+| -s / --sample_frac | 	the fraction of the dataset to use (default is 1, so 100%)	  |
+| -dh / --drop_healthy  | 	whether to drop those who have no conditions (default is False)	  |
+| -c / --coi | 	the name of some condition of interest (*e.g.* 'Depression') which is taken out of the analysis	 |
+  
+
+For example, 
+
+<br>
+
+**lcaselect**
+
+ Helps facilitate model selection for LCA using BIC criterion. The input file *must* be in the [specified format](#data). Use `cli lcaselect --help` for more details.
+
+| option            | 	description                             		                                             |
+|-------------------|-----------------------------------------------------------------------------------------|
+| -i / --infile    | 	the input filepath; recommended to store within the 'data' directory	       |
+| -b / --subdir    | 	denotes a subdirectory to create and write to, such as 'women'	       |
+| -mi / --min_k    | 	the minimum number k clusters to investigate (default is 2)	       |
+| -ma / --max_k    | 	the maximum number k clusters to investigate (default is 10)	       |
+| -s / --sample_frac | 	the fraction of the dataset to use (default is 1, so 100%)	  |
+| -dh / --drop_healthy  | 	whether to drop those who have no conditions (default is False)	  |
+| -c / --coi | 	the name of some condition of interest (*e.g.* 'Depression') which is taken out of the analysis	 |
+  
+
+For example, 
+
+<br>
+
+**lca**
+
+ Performs Latent Class Analysis on an input file. The input file *must* be in the [specified format](#data). Use `cli lca --help` for more details.
+
+| option            | 	description                             		                                             |
+|-------------------|-----------------------------------------------------------------------------------------|
+| -i / --infile    | 	the input filepath; recommended to store within the 'data' directory	       |
+| -b / --subdir    | 	denotes a subdirectory to create and write to, such as 'women'	       |
+| -r / --repetitions    | 	number of times to run the clustering method; this is due to the sensitivity of initialization (default is 1)       |
+| -k / --kclusters    | 	k number of clusters (default is 10)	       |
+| -s / --sample_frac | 	the fraction of the dataset to use (default is 1, so 100%)	  |
+| -dh / --drop_healthy  | 	whether to drop those who have no conditions (default is False)	  |
+| -c / --coi | 	the name of some condition of interest (*e.g.* 'Depression') which is taken out of the analysis	 |
+  
+
+For example, 
+
+<br>
+
+**kmeselect**
+
+ Helps facilitate model selection for *k*-medoids using silhouette score. The input file *must* be in the [specified format](#data). Use `cli kmeselect --help` for more details.
+
+| option            | 	description                             		                                             |
+|-------------------|-----------------------------------------------------------------------------------------|
+| -i / --infile    | 	the input filepath; recommended to store within the 'data' directory	       |
+| -b / --subdir    | 	denotes a subdirectory to create and write to, such as 'women'	       |
+| -mi / --min_k    | 	the minimum number k clusters to investigate (default is 2)	       |
+| -ma / --max_k    | 	the maximum number k clusters to investigate (default is 10)	       |
+| -s / --sample_frac | 	the fraction of the dataset to use (default is 1, so 100%)	  |
+| -dh / --drop_healthy  | 	whether to drop those who have no conditions (default is False)	  |
+| -c / --coi | 	the name of some condition of interest (*e.g.* 'Depression') which is taken out of the analysis	 |
+  
+
+For example, 
+
+<br>
+
+**kmedoids**
+
+ Performs *k*-medoids clustering on an input file. The input file *must* be in the [specified format](#data). Use `cli kmedoids --help` for more details.
+
+| option            | 	description                             		                                             |
+|-------------------|-----------------------------------------------------------------------------------------|
+| -i / --infile    | 	the input filepath; recommended to store within the 'data' directory	       |
+| -b / --subdir    | 	denotes a subdirectory to create and write to, such as 'women'	       |
+| -k / --kclusters    | 	k number of clusters (default is 10)	       |
+| -s / --sample_frac | 	the fraction of the dataset to use (default is 1, so 100%)	  |
+| -dh / --drop_healthy  | 	whether to drop those who have no conditions (default is False)	  |
+| -c / --coi | 	the name of some condition of interest (*e.g.* 'Depression') which is taken out of the analysis	 |
+  
+
+For example, 
+
+<br>
+
+**kmoselect**
+
+ Helps facilitate model selection for *k*-modes using silhouette score. The input file *must* be in the [specified format](#data). Use `cli kmoselect --help` for more details.
+
+| option            | 	description                             		                                             |
+|-------------------|-----------------------------------------------------------------------------------------|
+| -i / --infile    | 	the input filepath; recommended to store within the 'data' directory	       |
+| -b / --subdir    | 	denotes a subdirectory to create and write to, such as 'women'	       |
+| -mi / --min_k    | 	the minimum number k clusters to investigate (default is 2)	       |
+| -ma / --max_k    | 	the maximum number k clusters to investigate (default is 10)	       |
+| -s / --sample_frac | 	the fraction of the dataset to use (default is 1, so 100%)	  |
+| -dh / --drop_healthy  | 	whether to drop those who have no conditions (default is False)	  |
+| -c / --coi | 	the name of some condition of interest (*e.g.* 'Depression') which is taken out of the analysis	 |
+  
+
+For example, 
+
+<br>
+
+**kmodes**
+
+ Performs *k*-modes clustering on an input file. The input file *must* be in the [specified format](#data). Use `cli kmodes --help` for more details.
+
+| option            | 	description                             		                                             |
+|-------------------|-----------------------------------------------------------------------------------------|
+| -i / --infile    | 	the input filepath; recommended to store within the 'data' directory	       |
+| -b / --subdir    | 	denotes a subdirectory to create and write to, such as 'women'	       |
+| -r / --repetitions    | 	number of times to run the clustering method; this is due to the sensitivity of initialization (default is 1)       |
+| -k / --kclusters    | 	k number of clusters (default is 10)	       |
+| -s / --sample_frac | 	the fraction of the dataset to use (default is 1, so 100%)	  |
+| -dh / --drop_healthy  | 	whether to drop those who have no conditions (default is False)	  |
+| -c / --coi | 	the name of some condition of interest (*e.g.* 'Depression') which is taken out of the analysis	 |
+  
+
+For example, 
