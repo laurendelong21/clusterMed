@@ -84,9 +84,9 @@ Read further for options and examples.
 | 	agg		      | 	Performs agglomerative hierarchical clustering on an input file.             |
 | 	lcaselect	      | 	Helps facilitate model selection for LCA using BIC criterion.           |
 | 	lca	     | 	Performs Latent Class Analysis on an input file.	 |     |
-| 	kmeselect	     | 	Helps facilitate model selection for *k*-medoids using silhouette score.	 |     |
+| 	kmeselect	     | 	Helps facilitate model selection for *k*-medoids using a scree plot.	 |     |
 | 	kmedoids	     | 	Performs *k*-medoids clustering on an input file.	 |     |
-| 	kmoselect	     | 	Helps facilitate model selection for *k*-modes using silhouette score.	 |     |
+| 	kmoselect	     | 	Helps facilitate model selection for *k*-modes using a scree plot.	 |     |
 | 	kmodes	     | 	Performs *k*-modes clustering on an input file.	 |     |
 
 <br>
@@ -170,7 +170,7 @@ Here, we are looking for 10 classes, and repeating this analysis 5 times. Execut
 
 **kmeselect**
 
- Helps facilitate model selection for *k*-medoids using silhouette score. The input file *must* be in the [specified format](#data). Use `clustr kmeselect --help` for more details.
+ Helps facilitate model selection for *k*-medoids using a scree plot. The input file *must* be in the [specified format](#data). Use `clustr kmeselect --help` for more details.
 
 | option            | 	description                             		                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
@@ -219,7 +219,7 @@ Here, we are looking for 10 clusters, and we have requested that results are wri
 
 **kmoselect**
 
- Helps facilitate model selection for *k*-modes using silhouette score. The input file *must* be in the [specified format](#data). Use `clustr kmoselect --help` for more details.
+ Helps facilitate model selection for *k*-modes using a scree plot. The input file *must* be in the [specified format](#data). Use `clustr kmoselect --help` for more details.
 
 | option            | 	description                             		                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
