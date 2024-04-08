@@ -176,7 +176,7 @@ def kmeselect(infile: str,
               drop_healthy: bool = False,
               coi: str = None
               ):
-    """Helps facilitate model selection for LCA using BIC criterion
+    """Helps facilitate model selection for k-medoids using silhouette score
     :param infile: the input filepath; recommended to store within the 'data' directory
     :param subdir: denotes a subdirectory to create and write
     :param min_k: the minimum number k clusters to investigate
@@ -200,8 +200,6 @@ def kmeselect(infile: str,
               help="the input filepath; recommended to store within the 'data' directory")
 @click.option("-b", "--subdir", type=str, default=None,
               help="denotes a subdirectory to create and write to, such as 'women'")
-@click.option("-r", "--repetitions", type=int, default=1,
-              help="number of times to run the clustering method")
 @click.option("-k", "--kclusters", type=int, default=10,
               help="k clusters")
 @click.option("-s", "--sample_frac", type=float, default=1,
@@ -212,7 +210,6 @@ def kmeselect(infile: str,
               help="the name of some condition of interest (e.g. 'Depression') which is taken out of the analysis")
 def kmedoids(infile: str,
              subdir: str,
-             repetitions: int = 1,
              kclusters: int = 10,
              sample_frac: float = 1,
              drop_healthy: bool = False,
@@ -220,7 +217,6 @@ def kmedoids(infile: str,
     """Performs KMedoids clustering
     :param infile: the input filepath; recommended to store within the 'data' directory
     :param subdir: denotes a subdirectory to create and write
-    :param repetitions: number of times to run the clustering method
     :param kclusters: the number k clusters
     :param sample_frac: the fraction of the data to be sampled; default is 1, so all the data is used
     :param drop_healthy: boolean value indicating whether to drop those with no conditions
@@ -229,19 +225,12 @@ def kmedoids(infile: str,
     df, mat, _, _, cgrps = get_data(infile, sample_frac, drop_healthy, coi)
     foldr = osp.join(KMEDOIDS_RESULTS, subdir) if subdir else KMEDOIDS_RESULTS
 
-    # do r number of times:
-    for i in range(repetitions):
-        if repetitions != 1:
-            subfolder = osp.join(foldr, f'run_{i}')
-        else:
-            subfolder = foldr
-        
-        os.makedirs(subfolder, exist_ok=True)
+    os.makedirs(foldr, exist_ok=True)
 
-        _, labels = fit_kmedoids(mat, subfolder, cgrps, kclusters)
-        df['kmedoids_cluster_labels'] = labels
-        df.to_csv(osp.join(subfolder, 'kmedoids_cluster_labels.tsv'), sep='\t')
-        plot_morbidity_dist(df, 'kmedoids_cluster_labels', subfolder, 'kmedoids')
+    _, labels = fit_kmedoids(mat, foldr, cgrps, kclusters)
+    df['kmedoids_cluster_labels'] = labels
+    df.to_csv(osp.join(foldr, 'kmedoids_cluster_labels.tsv'), sep='\t')
+    plot_morbidity_dist(df, 'kmedoids_cluster_labels', foldr, 'kmedoids')
 
 
 @cli.command()
@@ -267,7 +256,7 @@ def kmoselect(infile: str,
               drop_healthy: bool = False,
               coi: str = None
               ):
-    """Helps facilitate model selection for LCA using BIC criterion
+    """Helps facilitate model selection for k-modes using silhouette score
     :param infile: the input filepath; recommended to store within the 'data' directory
     :param subdir: denotes a subdirectory to create and write
     :param min_k: the minimum number k clusters to investigate

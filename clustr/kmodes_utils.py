@@ -12,7 +12,7 @@ from collections import OrderedDict
 print(STARTUP_MSG)
 
 
-def calculate_kmodes(dfMatrix,
+def calculate_kmodes(data_mat,
                      min_k=1,
                      max_k=10,
                      distance_metric='Huang'):
@@ -23,11 +23,11 @@ def calculate_kmodes(dfMatrix,
         print('Cluster initiation: {}'.format(cluster))
         kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric,
                          n_init=1, random_state=0)
-        kmodes.fit_predict(dfMatrix)
+        kmodes.fit_predict(data_mat)
         labels = kmodes.labels_
         cost[cluster] = kmodes.cost_
         try:
-            sil_scores[cluster] = silhouette_score(dfMatrix, labels, metric='hamming')
+            sil_scores[cluster] = silhouette_score(data_mat, labels, metric='hamming')
         except ValueError:
             sil_scores[cluster] = -1
 

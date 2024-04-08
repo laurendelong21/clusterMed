@@ -1,11 +1,8 @@
-# Import module for data visualization
-from plotnine import *
-import plotnine
 # Data visualization with matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 # Use the theme of ggplot
-plt.style.use('ggplot')
+#plt.style.use('ggplot')
 import numpy as np
 from typing import List, Dict, Any
 import json
@@ -187,28 +184,22 @@ def plot_ks(cost,
             metric='costs',
             min_k=1,
             max_k=10):
-
     """Plots the respective costs per K"""
-    df_cost = pd.DataFrame({'Cluster': range(min_k, max_k+1), 'Cost': cost})  # Data viz
+    df_cost = pd.DataFrame.from_dict(cost, orient='index', columns=['Cost'])
+    df_cost.reset_index(inplace=True)
+    df_cost.columns = ['Cluster', 'Cost']
     num_ks = max_k - min_k
-    plotnine.options.figure_size = (int(num_ks * 8 / 9), 4.8)
-    gg_obj = (
-            ggplot(data=df_cost) +
-            geom_line(aes(x='Cluster',
-                          y='Cost')) +
-            geom_point(aes(x='Cluster',
-                           y='Cost')) +
-            geom_label(aes(x='Cluster',
-                           y='Cost',
-                           label='Cluster'),
-                       size=max_k,
-                       nudge_y=1000) +
-            labs(title='Optimal number of Clusters') +
-            xlab('Number of Clusters (k)') +
-            ylab(f'{metric}') +
-            theme_minimal()
-    )
-    gg_obj.save(filename=osp.join(out_folder, f'model_selection_{metric}.png'), dpi=300)
+    plt.figure(figsize=(int(num_ks * 8 / 9), 4.8))
+    plt.plot(df_cost['Cluster'], df_cost['Cost'], marker='o', linestyle='-')
+    plt.scatter(df_cost['Cluster'], df_cost['Cost'])
+    for i, txt in enumerate(df_cost['Cluster']):
+        plt.annotate(txt, (df_cost['Cluster'][i], df_cost['Cost'][i]+1000), size=max_k)
+    plt.title('Optimal number of Clusters')
+    plt.xlabel('Number of Clusters (k)')
+    plt.ylabel(f'{metric}')
+    plt.savefig(osp.join(out_folder, f'model_selection_{metric}.png'), dpi=300)
+    plt.close()
+
 
 
 def get_data(input_file,
