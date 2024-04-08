@@ -44,11 +44,10 @@ This package operates upon [tab-separated files](https://en.wikipedia.org/wiki/T
 
 <br>
 
-### Tutorial
+**Dummy File**
+<a name="dummy"></a>
 
-[tutorial.ipynb](https://github.com/laurendelong21/mrc_clustering/tutorial.ipynb) gives an overview of how you can use the `clustr` package within your Python code.
-
-To run the notebook, you need to do a few things first. First, create a dummy file by running [generate_dummy_data.sh](https://github.com/laurendelong21/mrc_clustering/generate_dummy_data.sh). 
+If you wish to test out the functionality of the `clustr` package, you can create a dummy file using [generate_dummy_data.sh](https://github.com/laurendelong21/mrc_clustering/generate_dummy_data.sh). 
 
 Assuming you're already in the repository's directory,
 
@@ -59,9 +58,22 @@ Run the script in the terminal. It will take a few minutes to generate a dummy f
     ./generate_dummy_data.sh
 
 
-Finally, connect your virtual environment as a kernel. Depending upon what you're using (Jupyter notebook, VSCode, etc.), there are various instructions online for doing so.
+<br>
 
-Using your environment as the kernel, use the notebook. Be careful with changing the proportion of the file used- these methods can be computationally expensive with large files, so consider whether your machine can handle working with the whole dummy file.
+### Tutorial
+
+[tutorial.ipynb](https://github.com/laurendelong21/mrc_clustering/tutorial.ipynb) gives an overview of how you can use the `clustr` package within your Python code.
+
+To run the notebook, you need to do a few things first. 
+
+1. First, create a dummy file by running [generate_dummy_data.sh](https://github.com/laurendelong21/mrc_clustering/generate_dummy_data.sh). Directions are [above](#dummy).
+
+
+2. Connect your virtual environment as a kernel. Depending upon what you're using (Jupyter notebook, VSCode, etc.), there are various instructions online for doing so. It should be something like activating the environment, then:
+
+        python -m ipykernel install --user --name=$ENV_NAME$
+
+3. With your environment as the kernel, use the notebook. Be careful with changing the proportion of the file used- these methods can be computationally expensive with large files, so consider whether your machine can handle working with the whole dummy file.
 
 <br>
 
@@ -112,9 +124,9 @@ Below, we describe how to use each of these commands with examples.
 
 For example, 
 
-    clustr agg -i ./data/dummy_data.tsv -dh True -s 0.1 -c disease_3
+    clustr agg -i ./data/dummy_data.tsv -dh True -s 0.05 -c disease_3
 
-In the above, we will do agglomerative hierarchical clustering upon **10%** of the rows in the dummy data file, after dropping those with no conditions (all zeroes). Before those steps, however, we are taking out `disease_3` and saving the labels for this condition separately. 
+In the above, we will do agglomerative hierarchical clustering upon **5%** of the rows in the dummy data file, after dropping those with no conditions (all zeroes). Before those steps, however, we are taking out `disease_3` and saving the labels for this condition separately. 
 
 <br>
 
@@ -135,9 +147,9 @@ In the above, we will do agglomerative hierarchical clustering upon **10%** of t
 
 For example, 
 
-    clustr lcaselect -i ./data/dummy_data.tsv -dh True -s 0.1 -c disease_3 -mi 2 -ma 5
+    clustr lcaselect -i ./data/dummy_data.tsv -dh True -s 0.05 -c disease_3 -mi 2 -ma 5
 
-In the above, we will investigate what number of classes, *k*, works best with latent class analysis upon **10%** of the rows in the dummy data file. First, we are taking out `disease_3` and saving the labels for this condition separately , and we are dropping those with no conditions (all zeroes).
+In the above, we will investigate what number of classes, *k*, works best with latent class analysis upon **5%** of the rows in the dummy data file. First, we are taking out `disease_3` and saving the labels for this condition separately , and we are dropping those with no conditions (all zeroes).
 
 Specifically, we are investigating *k* within the range of [2, 5].
 
@@ -160,9 +172,9 @@ Specifically, we are investigating *k* within the range of [2, 5].
 
 For example, 
 
-    clustr lca -i ./data/dummy_data.tsv -dh True -s 0.1 -c disease_3 -k 10 -r 5
+    clustr lca -i ./data/dummy_data.tsv -dh True -s 0.05 -c disease_3 -k 10 -r 5
 
-In the above, we will do latent class analysis upon **10%** of the rows in the dummy data file, after dropping those with no conditions (all zeroes). Before those steps, however, we are taking out `disease_3` and saving the labels for this condition separately. 
+In the above, we will do latent class analysis upon **5%** of the rows in the dummy data file, after dropping those with no conditions (all zeroes). Before those steps, however, we are taking out `disease_3` and saving the labels for this condition separately. 
 
 Here, we are looking for 10 classes, and repeating this analysis 5 times. Execution will automatically make five subdirectories within the LCA results folder, and each subdirectory will comprise individual results.
 
@@ -185,9 +197,9 @@ Here, we are looking for 10 classes, and repeating this analysis 5 times. Execut
 
 For example, 
 
-    clustr kmeselect -i ./data/dummy_data.tsv -dh True -s 0.1 -c disease_3 -mi 2 -ma 5
+    clustr kmeselect -i ./data/dummy_data.tsv -dh True -s 0.05 -c disease_3 -mi 2 -ma 5
 
-In the above, we will investigate what number of clusters, *k*, works best with *k*-medoids clustering upon **10%** of the rows in the dummy data file. First, we are taking out `disease_3` and saving the labels for this condition separately , and we are dropping those with no conditions (all zeroes).
+In the above, we will investigate what number of clusters, *k*, works best with *k*-medoids clustering upon **5%** of the rows in the dummy data file. First, we are taking out `disease_3` and saving the labels for this condition separately , and we are dropping those with no conditions (all zeroes).
 
 Specifically, we are investigating *k* within the range of [2, 5].
 
@@ -209,9 +221,9 @@ Specifically, we are investigating *k* within the range of [2, 5].
 
 For example, 
 
-    clustr kmedoids -i ./data/dummy_data.tsv -dh True -s 0.1 -c disease_3 -k 10 -b 02_05_2024
+    clustr kmedoids -i ./data/dummy_data.tsv -dh True -s 0.05 -c disease_3 -k 10 -b 02_05_2024
 
-In the above, we will do *k*-medoids clustering upon **10%** of the rows in the dummy data file, after dropping those with no conditions (all zeroes). Before those steps, however, we are taking out `disease_3` and saving the labels for this condition separately. 
+In the above, we will do *k*-medoids clustering upon **5%** of the rows in the dummy data file, after dropping those with no conditions (all zeroes). Before those steps, however, we are taking out `disease_3` and saving the labels for this condition separately. 
 
 Here, we are looking for 10 clusters, and we have requested that results are written into a subdirectory of the *k*-medoids results folder, called `02_05_2024`.
 
@@ -234,9 +246,9 @@ Here, we are looking for 10 clusters, and we have requested that results are wri
 
 For example, 
 
-    clustr kmoselect -i ./data/dummy_data.tsv -dh True -s 0.1 -c disease_3 -mi 2 -ma 5
+    clustr kmoselect -i ./data/dummy_data.tsv -dh True -s 0.05 -c disease_3 -mi 2 -ma 5
 
-In the above, we will investigate what number of clusters, *k*, works best with *k*-modes clustering upon **10%** of the rows in the dummy data file. First, we are taking out `disease_3` and saving the labels for this condition separately , and we are dropping those with no conditions (all zeroes).
+In the above, we will investigate what number of clusters, *k*, works best with *k*-modes clustering upon **5%** of the rows in the dummy data file. First, we are taking out `disease_3` and saving the labels for this condition separately , and we are dropping those with no conditions (all zeroes).
 
 Specifically, we are investigating *k* within the range of [2, 5]. 
 
@@ -259,8 +271,8 @@ Specifically, we are investigating *k* within the range of [2, 5].
 
 For example, 
 
-    clustr kmodes -i ./data/dummy_data.tsv -dh True -s 0.1 -c disease_3 -k 10 -r 5
+    clustr kmodes -i ./data/dummy_data.tsv -dh True -s 0.05 -c disease_3 -k 10 -r 5
 
-In the above, we will do *k*-modes clustering upon **10%** of the rows in the dummy data file, after dropping those with no conditions (all zeroes). Before those steps, however, we are taking out `disease_3` and saving the labels for this condition separately. 
+In the above, we will do *k*-modes clustering upon **5%** of the rows in the dummy data file, after dropping those with no conditions (all zeroes). Before those steps, however, we are taking out `disease_3` and saving the labels for this condition separately. 
 
 Here, we are looking for 10 clusters, and repeating this analysis 5 times. Execution will automatically make five subdirectories within the *k*-modes results folder, and each subdirectory will comprise individual results.

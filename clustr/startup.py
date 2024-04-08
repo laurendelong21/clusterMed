@@ -15,4 +15,4 @@ logging.basicConfig(filename=osp.join(LOGS, 'multimorb_clustering.log'),
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-STARTUP_MSG = "Initializing..."
+STARTUP_MSG = " "

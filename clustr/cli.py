@@ -3,11 +3,10 @@ import logging
 import os
 import os.path as osp
 from memory_profiler import profile
-from clustr.constants import PROCESSED_DATA
-from clustr.constants import HIER_AGG_RESULTS, AGG_MEN, AGG_WOMEN
-from clustr.constants import LCA_RESULTS, LCA_MEN, LCA_WOMEN
-from clustr.constants import KMEDOIDS_RESULTS, KMEDOIDS_MEN, KMEDOIDS_WOMEN
-from clustr.constants import KMODES_RESULTS, KMODES_MEN, KMODES_WOMEN
+from clustr.constants import HIER_AGG_RESULTS
+from clustr.constants import LCA_RESULTS
+from clustr.constants import KMEDOIDS_RESULTS
+from clustr.constants import KMODES_RESULTS
 from clustr.utils import get_data, plot_ks, plot_morbidity_dist, dict_to_json
 from clustr.hier_agg_utils import get_agg_clusters, plot_dendrogram
 from clustr.lca_utils import select_lca_model, get_lca_clusters

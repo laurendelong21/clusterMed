@@ -9,6 +9,7 @@ requirements = ['bayespy==0.5.22',
                 'ipykernel==6.7.0',
                 'kmodes==0.12.1',
                 'matplotlib==3.5.2',
+                'memory_profiler==0.60.0',
                 'numpy==1.22.3',
                 'pandas==1.4.2',
                 'scikit-learn==1.1.1',
@@ -32,7 +33,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7'
     ],
-    description="UK BioBank Multimorbidity Clustering",
+    description="Systematic Multimorbidity Clustering",
     entry_points={
         'console_scripts': [
             'clustr=clustr.cli:cli',
