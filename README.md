@@ -1,4 +1,4 @@
-# A Systematic Clustering Analysis
+# A Systematic Clustering Analysis for Binary Multimorbidity Data
 
 This is the code repository corrresponding to the systematic clustering analysis within [TODO add preprint](https://laurendelong21.github.io/).
 
@@ -40,7 +40,7 @@ This package operates upon [tab-separated files](https://en.wikipedia.org/wiki/T
 
           pd.read_csv(input_file, sep='\t', index_col=0)
 
-The multimorbidity data should be binary (zero or one) indicating whether each participant (row) has a condition (row).
+- The multimorbidity data should be binary (zero or one) indicating whether each participant (row) has a condition (row).
 
 <br>
 
@@ -69,9 +69,9 @@ Using your environment as the kernel, use the notebook. Be careful with changing
 
 These clustering methods can be computationally expensive for many participants and conditions. You may want to run these on a remote server with a CLI.
 
-To use the CLI, you only need the `clustr` package installed.
+To use the CLI, you only need the `clustr` package installed and your data files ready. In the examples given, we use the dummy file, as above.
 
-Use one of the commands, following the command `cli`.
+Use one of the commands, following the command `clustr`.
 
 Read further for options and examples.
 
@@ -91,9 +91,13 @@ Read further for options and examples.
 
 <br>
 
+Below, we describe how to use each of these commands with examples.
+
+<br>
+
 **agg**
 
- Performs agglomerative hierarchical clustering on an input file. The input file *must* be in the [specified format](#data). Use `cli agg --help` for more details.
+ Performs agglomerative hierarchical clustering on an input file. The input file *must* be in the [specified format](#data). Use `clustr agg --help` for more details.
 
 | option            | 	description                             		                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
@@ -116,7 +120,7 @@ In the above, we will do agglomerative hierarchical clustering upon **10%** of t
 
 **lcaselect**
 
- Helps facilitate model selection for LCA using BIC criterion. The input file *must* be in the [specified format](#data). Use `cli lcaselect --help` for more details.
+ Helps facilitate model selection for LCA using BIC criterion. The input file *must* be in the [specified format](#data). Use `clustr lcaselect --help` for more details.
 
 | option            | 	description                             		                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
@@ -141,7 +145,7 @@ Specifically, we are investigating *k* within the range of [2, 5].
 
 **lca**
 
- Performs Latent Class Analysis on an input file. The input file *must* be in the [specified format](#data). Use `cli lca --help` for more details.
+ Performs Latent Class Analysis on an input file. The input file *must* be in the [specified format](#data). Use `clustr lca --help` for more details.
 
 | option            | 	description                             		                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
@@ -166,7 +170,7 @@ Here, we are looking for 10 classes, and repeating this analysis 5 times. Execut
 
 **kmeselect**
 
- Helps facilitate model selection for *k*-medoids using silhouette score. The input file *must* be in the [specified format](#data). Use `cli kmeselect --help` for more details.
+ Helps facilitate model selection for *k*-medoids using silhouette score. The input file *must* be in the [specified format](#data). Use `clustr kmeselect --help` for more details.
 
 | option            | 	description                             		                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
@@ -191,7 +195,7 @@ Specifically, we are investigating *k* within the range of [2, 5].
 
 **kmedoids**
 
- Performs *k*-medoids clustering on an input file. The input file *must* be in the [specified format](#data). Use `cli kmedoids --help` for more details.
+ Performs *k*-medoids clustering on an input file. The input file *must* be in the [specified format](#data). Use `clustr kmedoids --help` for more details.
 
 | option            | 	description                             		                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
@@ -215,7 +219,7 @@ Here, we are looking for 10 clusters, and we have requested that results are wri
 
 **kmoselect**
 
- Helps facilitate model selection for *k*-modes using silhouette score. The input file *must* be in the [specified format](#data). Use `cli kmoselect --help` for more details.
+ Helps facilitate model selection for *k*-modes using silhouette score. The input file *must* be in the [specified format](#data). Use `clustr kmoselect --help` for more details.
 
 | option            | 	description                             		                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
@@ -240,7 +244,7 @@ Specifically, we are investigating *k* within the range of [2, 5].
 
 **kmodes**
 
- Performs *k*-modes clustering on an input file. The input file *must* be in the [specified format](#data). Use `cli kmodes --help` for more details.
+ Performs *k*-modes clustering on an input file. The input file *must* be in the [specified format](#data). Use `clustr kmodes --help` for more details.
 
 | option            | 	description                             		                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
