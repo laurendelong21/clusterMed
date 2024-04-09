@@ -1,6 +1,7 @@
 import os.path as osp
 from typing import List
 from sklearn_extra.cluster import KMedoids
+from clustr.startup import logger
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
 from collections import OrderedDict
@@ -14,11 +15,12 @@ def calculate_kmedoids(data_mat,
     :param min_k: the minimum k clusters to test
     :param max_k: the maximum k clusters to test
     """
+    logger.info(f'Choosing k for k-medoids clustering with cosine similarity.')
     cost = OrderedDict()
     sil_scores = OrderedDict()
     for cluster in range(min_k, max_k+1):
         cobj = KMedoids(n_clusters=cluster, random_state=0, metric='cosine').fit(data_mat)
-        print('Cluster initiation: {}'.format(cluster))
+        logger.info('Cluster initiation: {}'.format(cluster))
         labels = cobj.labels_
         cost[cluster] = cobj.inertia_
         try:
@@ -41,6 +43,7 @@ def fit_kmedoids(data_mat,
     :param k: the number k clusters
     :returns: the KMedoids model and the corresponding cluster labels
     """
+    logger.info(f'Performing k-medoids clustering with cosine similarity.')
     cobj = KMedoids(n_clusters=k, random_state=None, metric='cosine').fit(data_mat)
     labels = cobj.labels_
     db_score = davies_bouldin_score(data_mat, labels)
@@ -58,5 +61,6 @@ def fit_kmedoids(data_mat,
             if m == 1:
                 centroid_comorbidities[count].append(cgrps[count2])
     dict_to_json(centroid_comorbidities, osp.join(out_folder, 'centroids.json'))
+    logger.info(f'Finished k-medoids clustering with cosine similarity.')
     return cobj, labels
 

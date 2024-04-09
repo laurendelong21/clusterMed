@@ -1,6 +1,7 @@
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from clustr.utils import dict_to_json
+from clustr.startup import logger
 import scipy.cluster.hierarchy as sch
 import scipy.spatial.distance as ssd
 import matplotlib.pyplot as plt
@@ -21,6 +22,7 @@ def get_agg_clusters(data_mat,
     :param metric: the metric type used for clustering; default is hamming distance
     :param linkage: linkage method; default is complete
     """
+    logger.info(f'Performing agglomerative hierarchical clustering with {linkage} linkage and the {metric} metric.')
     model = AgglomerativeClustering(n_clusters=10, affinity='precomputed', linkage=linkage)
     model.fit(ssd.squareform(ssd.pdist(data_mat, metric=metric)))
     labels = model.labels_
@@ -31,6 +33,7 @@ def get_agg_clusters(data_mat,
                   'davies_boulden': db_score,
                   'calinski_harabasz': ch_score},
                  osp.join(out_folder, 'scores.json'))
+    logger.info(f'Finished agglomerative hierarchical clustering with {linkage} linkage and the {metric} metric.')
     return model, labels
 
 
@@ -44,6 +47,7 @@ def plot_dendrogram(data_mat,
     :param metric: the metric type used for clustering; default is hamming distance
     :param linkage: linkage method; default is complete
     """
+    logger.info(f'Plotting the dendrogram for {linkage} linkage and the {metric} metric.')
     dendrogram = sch.dendrogram(sch.linkage(data_mat,
                                             metric=metric,
                                             method=linkage))
