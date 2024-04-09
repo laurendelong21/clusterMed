@@ -9,10 +9,7 @@ import json
 import os.path as osp
 from scipy.stats import fisher_exact
 from statsmodels.stats.multitest import multipletests
-from clustr.startup import STARTUP_MSG
-
-
-print(STARTUP_MSG)
+from clustr.startup import logger
 
 
 def dict_to_json(d: Dict[Any, Any],
@@ -220,6 +217,7 @@ def get_data(input_file,
                 the excluded condition values, &
                 condition names
     """
+    logger.info(f'Processing data from {input_file}...')
     df = pd.read_csv(input_file, sep='\t', index_col=0)
     # Subset the data if necessary
     df = df.sample(frac=sample_frac, random_state=1)
@@ -240,5 +238,6 @@ def get_data(input_file,
     mat = df.to_numpy()
     # Get total conditions column for later
     df['tot_conditions'] = df[cgrps].sum(numeric_only=True, axis=1)
+    logger.info(f'Finished processing data from {input_file}.')
     return df, mat, pat_ids, exclusions, cgrps
 

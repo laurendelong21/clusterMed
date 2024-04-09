@@ -1,6 +1,6 @@
 from scipy import stats
 from clustr.lca import LCA
-from clustr.startup import STARTUP_MSG
+from clustr.startup import logger
 from clustr.utils import dict_to_json
 import os.path as osp
 import matplotlib.pyplot as plt
@@ -8,14 +8,12 @@ from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_har
 from collections import OrderedDict
 
 
-print(STARTUP_MSG)
-
-
 def select_lca_model(data_mat,
                      out_folder: str,
                      min_k: int = 2,
                      max_k: int = 10):
     """Generates a plot of BIC per k number of clusters for model selection"""
+    logger.info(f'Choosing k for LCA with BIC metric.')
     ks = [k for k in range(min_k, max_k + 1)]
     bics = OrderedDict()
     for k in ks:
@@ -44,6 +42,7 @@ def get_lca_clusters(data_mat,
     :param out_folder: the folder to which the figure files should be written.
     :param k: the number k clusters
     """
+    logger.info(f'Performing Latent Class Analysis')
     lca = LCA(n_components=k, tol=10e-4, max_iter=1000)
     lca.fit(data_mat)
     labels = lca.predict(data_mat)
@@ -55,4 +54,5 @@ def get_lca_clusters(data_mat,
                   'calinski_harabasz': ch_score},
                  osp.join(out_folder, 'scores.json'))
     # TODO: use lca.predict_proba(data_mat) to get probabilities as well?
+    logger.info(f'Finished Latent Class Analysis')
     return lca, labels

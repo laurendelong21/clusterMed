@@ -190,8 +190,8 @@ def kmeselect(infile: str,
     costs, sil_scores = calculate_kmedoids(mat, min_k, max_k)
     dict_to_json(dict(costs), osp.join(foldr, 'costs.json'))
     dict_to_json(dict(sil_scores), osp.join(foldr, 'sil_scores.json'))
-    plot_ks(list(costs.values()), foldr, 'costs', min_k, max_k)
-    plot_ks(list(sil_scores.values()), foldr, 'silhouette', min_k, max_k)
+    plot_ks(costs, foldr, 'costs', min_k, max_k)
+    plot_ks(sil_scores, foldr, 'silhouette', min_k, max_k)
 
 
 @cli.command()
@@ -270,8 +270,8 @@ def kmoselect(infile: str,
     costs, sil_scores = calculate_kmodes(mat, min_k, max_k)
     dict_to_json(dict(costs), osp.join(foldr, 'costs.json'))
     dict_to_json(dict(sil_scores), osp.join(foldr, 'sil_scores.json'))
-    plot_ks(list(costs.values()), foldr, 'costs', min_k, max_k)
-    plot_ks(list(sil_scores.values()), foldr, 'silhouette', min_k, max_k)
+    plot_ks(costs, foldr, 'costs', min_k, max_k)
+    plot_ks(sil_scores, foldr, 'silhouette', min_k, max_k)
 
 
 @cli.command()

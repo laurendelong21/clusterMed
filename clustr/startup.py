@@ -5,7 +5,6 @@ from clustr.constants import CACHE, LOGS, DATA_DIR, RESULTS
 
 
 for folder in [CACHE, LOGS, DATA_DIR, RESULTS]:
-    print(folder)
     os.makedirs(folder, exist_ok=True)
 
 # logging
@@ -15,5 +14,3 @@ logging.basicConfig(filename=osp.join(LOGS, 'multimorb_clustering.log'),
                     datefmt='%d/%m/%Y %I:%M:%S %p')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
-STARTUP_MSG = " "

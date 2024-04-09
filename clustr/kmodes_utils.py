@@ -1,5 +1,5 @@
 from kmodes.kmodes import KModes
-from clustr.startup import STARTUP_MSG
+from clustr.startup import logger
 from typing import List
 import os.path as osp
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
@@ -9,18 +9,16 @@ import pandas as pd
 from collections import OrderedDict
 
 
-print(STARTUP_MSG)
-
-
 def calculate_kmodes(data_mat,
                      min_k=1,
                      max_k=10,
                      distance_metric='Huang'):
     """Gets an array of costs per K"""
+    logger.info(f'Choosing k for k-modes clustering with Huang metric.')
     cost = OrderedDict()
     sil_scores = OrderedDict()
     for cluster in range(min_k, max_k+1):
-        print('Cluster initiation: {}'.format(cluster))
+        logger.info('Cluster initiation: {}'.format(cluster))
         kmodes = KModes(n_jobs=-1, n_clusters=cluster, init=distance_metric,
                          n_init=1, random_state=0)
         kmodes.fit_predict(data_mat)
@@ -45,6 +43,7 @@ def fit_kmodes(data_mat,
     :param k: the number k clusters
     :returns: the KModes model and the corresponding cluster labels
     """
+    logger.info(f'Performing k-modes clustering with Huang metric.')
     kmodes = KModes(n_jobs=-1, n_clusters=k,
                     init='Huang', random_state=None, n_init=1)
     kmodes.fit_predict(data_mat)
@@ -64,4 +63,5 @@ def fit_kmodes(data_mat,
             if m == 1:
                 centroid_comorbidities[count].append(cgrps[count2])
     dict_to_json(centroid_comorbidities, osp.join(out_folder, 'centroids.json'))
+    logger.info(f'Finished k-modes clustering with Huang metric.')
     return kmodes, labels
