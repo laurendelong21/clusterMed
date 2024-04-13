@@ -7,9 +7,9 @@ generate_random_binary() {
     echo $((RANDOM % 2))
 }
 
-# Number of rows and columns
-rows=10000
-columns=50
+# Default number of rows and columns
+default_rows=10000
+default_columns=50
 
 # Directory to write the file
 output_directory="data"
@@ -18,6 +18,14 @@ output_directory="data"
 if [[ ! -d "$output_directory" ]]; then
     mkdir -p "$output_directory"
 fi
+
+# Get user input for number of rows
+read -p "Enter the number of rows, or participants (default: $default_rows): " user_rows
+rows=${user_rows:-$default_rows}
+
+# Get user input for number of columns
+read -p "Enter the number of columns, or conditions (default: $default_columns): " user_columns
+columns=${user_columns:-$default_columns}
 
 # Generate header row
 header="index"

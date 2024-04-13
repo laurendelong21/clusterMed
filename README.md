@@ -63,7 +63,7 @@ Assuming you're already in the repository's directory,
 
     cd mrc_clustering
 
-Run the script in the terminal. It will take a few minutes to generate a dummy file with 10,000 faux participants and 50 condition columns.
+Run the script in the terminal. It will prompt you to enter the nunber of columns (conditions) and rows (participants) you want. If you just press enter, it will generate a dummy file with 10,000 faux participants and 50 condition columns.
 
     ./generate_dummy_data.sh
 
