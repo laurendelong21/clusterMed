@@ -6,14 +6,24 @@ To begin, create a Python environment and install the package:
 
 ## Installation
 
-Go to the repository:
+Clone and navigate to the repository:
 
+    git clone https://github.com/laurendelong21/mrc_clustering.git
     cd mrc_clustering
 
 create and activate a Python environment (replace `$ENV_NAME$` with your desired environment name):
 
+
+either **with venv**:
+
     python3 -m venv $ENV_NAME$
     source $ENV_NAME$/bin/activate
+
+
+or **with conda** (choose python>=3.7):
+
+    conda create --name $ENV_NAME$ python=3.7
+    conda activate $ENV_NAME$
 
 
  and install the `clustr` package:
@@ -40,7 +50,7 @@ This package operates upon [tab-separated files](https://en.wikipedia.org/wiki/T
 
           pd.read_csv(input_file, sep='\t', index_col=0)
 
-- The multimorbidity data should be binary (zero or one) indicating whether each participant (row) has a condition (row).
+- The multimorbidity data should be binary (zero or one) indicating whether each participant (row) has a condition (column).
 
 <br>
 
