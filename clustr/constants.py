@@ -13,6 +13,10 @@ LOGS = osp.join(CACHE, 'logs')
 #PROJECT_DIR = osp.dirname(osp.dirname(osp.realpath(__file__)))
 
 def find_repo_directory():
+    cwd = os.getcwd()
+    if cwd.endswith('neurosymodal'):
+        return cwd
+    
     if osp.exists(osp.join(HOME, 'mrc_clustering')):
         return osp.join(HOME, 'mrc_clustering')
 
