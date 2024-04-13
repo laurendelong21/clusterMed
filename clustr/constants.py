@@ -13,6 +13,13 @@ LOGS = osp.join(CACHE, 'logs')
 #PROJECT_DIR = osp.dirname(osp.dirname(osp.realpath(__file__)))
 
 def find_repo_directory():
+    cwd = os.getcwd()
+    if cwd.endswith('neurosymodal'):
+        return cwd
+    
+    if osp.exists(osp.join(HOME, 'mrc_clustering')):
+        return osp.join(HOME, 'mrc_clustering')
+
     # Get the directory of the currently executing script
     script_directory = osp.dirname(osp.realpath(__file__))
     
@@ -22,7 +29,7 @@ def find_repo_directory():
         parent_directory = osp.dirname(current_directory)
         # Break if we've reached the root directory
         if parent_directory == current_directory:
-            print("NOTICE: Unable to find 'mrc_clustering' directory; creating data and results folders within HOME directory.")
+            print("NOTICE: Unable to find 'mrc_clustering' directory- is it nested?; creating data and results folders within HOME directory.")
             return HOME
         current_directory = parent_directory
     return current_directory
