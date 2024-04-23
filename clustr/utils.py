@@ -20,48 +20,49 @@ def dict_to_json(d: Dict[Any, Any],
 
 
 def get_top_cluster_conds(df: pd.DataFrame,
-                          cgrps: List[str],
-                          cluster_labels: str,
+                          conditions: List[str],
+                          labels_column: str,
                           cluster_no: int):
     """Gets the condition frequencies for a certain cluster
     :param df: the dataframe being operated upon
-    :param cgrps: the list of conditions
-    :param cluster_labels: the column name containing the cluster labels
+    :param conditions: the list of conditions; often the column names
+    :param labels_column: the column name containing the cluster labels
     :param cluster_no: the cluster number to select"""
-    clstr = df.loc[df[cluster_labels] == cluster_no]
-    clus_morbs = clstr[cgrps].sum().sort_values(ascending=False)
-    return clus_morbs
+    clstr = df.loc[df[labels_column] == cluster_no]
+    cluster_counts = clstr[conditions].sum().sort_values(ascending=False)
+    return cluster_counts
 
 
 def get_adjusted_cluster_conds(df: pd.DataFrame,
-                               cgrps: List[str],
-                               cluster_labels: str,
+                               conditions: List[str],
+                               labels_column: str,
                                cluster_no: int):
-    """Gets the adjusted relative condition frequencies for a certain cluster
+    """Gets the adjusted relative condition frequencies (ARFs) and prevalences for a certain cluster;
+        returns them as dictionaries
     :param df: the dataframe being operated upon
-    :param cgrps: the list of conditions
-    :param cluster_labels: the column name containing the cluster labels
+    :param conditions: the list of conditions; often the column names
+    :param labels_column: the column name containing the cluster labels
     :param cluster_no: the cluster number to select"""
-    clus_morbs = get_top_cluster_conds(df, cgrps, cluster_labels, cluster_no)
-    clus_freqs = clus_morbs.div(df[cluster_labels].value_counts()[cluster_no])
-    morb_freqs = df[cgrps].sum().sort_values(ascending=False).div(len(df))
-    adj_freqs = clus_freqs.div(morb_freqs).sort_values(ascending=False)
-    return adj_freqs, clus_morbs
+    cluster_counts = get_top_cluster_conds(df, conditions, labels_column, cluster_no)
+    cluster_prevalences = cluster_counts.div(df[labels_column].value_counts()[cluster_no])  # relative freqs within cluster
+    cohort_prevalences = df[conditions].sum().sort_values(ascending=False).div(len(df))  # relative freqs in the whole cohort
+    arfs = cluster_prevalences.div(cohort_prevalences).sort_values(ascending=False)
+    return dict(arfs), dict(cluster_prevalences)
 
 
 def generate_contingency_table(df: pd.DataFrame,
                                condition: str,
-                               labels_col: str,
+                               labels_column: str,
                                cluster_no: int):
     """Generates a 2x2 contingency table (numpy array) of the people who are in a cluster vs. not in
     that cluster and the people suffering from a condition v. not suffering from that condition.
     :param df: the dataframe being operated upon
     :param condition: the name of the condition being considered
-    :param labels_col: the column name containing the cluster labels
+    :param labels_column: the column name containing the cluster labels
     :param cluster_no: the number of the cluster in question
     """
     # select those within the cluster
-    clust = df.loc[df[labels_col] == cluster_no]
+    clust = df.loc[df[labels_column] == cluster_no]
     # people in the cluster with the condition
     clust_cond = clust[condition].sum()
     # people in the cluster w/o the condition
@@ -76,38 +77,32 @@ def generate_contingency_table(df: pd.DataFrame,
 
 
 def find_fischers_coefficients(df: pd.DataFrame,
-                               labels_col: str,
-                               cgrps: List[str],
-                               outfl: str,
-                               output_type: str = 'json'):
+                               labels_column: str,
+                               conditions: List[str],
+                               alpha: float = 0.05):
     """Finds a Fischer's Exact Test p value for each condition and each cluster label
     to assess whether each condition is overrepresented in each cluster
     Returns two dictionaries: one is the p values, and one is the p values adjusted for Bonferonni and
     alpha of 0.05"""
-    coeffs = {}
-    adj_coeffs = {}
-    for clust in df[labels_col].unique():
+    coeffs = {}  # to store the p-values
+    adj_coeffs = {}  # to store the Bonferonni adjusted p-values
+    for clust in df[labels_column].unique():  # for each cluster number,
         coeffs[clust] = {}
         adj_coeffs[clust] = {}
         conds = []
         pvals = []
-        for cond in cgrps:
+        for cond in conditions:
             cot_tab = generate_contingency_table(df,
                                                  cond,
-                                                 labels_col,
+                                                 labels_column,
                                                  clust)
-            oddsr, p = fisher_exact(cot_tab, alternative='two-sided')
+            _, p = fisher_exact(cot_tab, alternative='two-sided')
             conds.append(cond)
             pvals.append(p)
             coeffs[clust][cond] = p
-        _, adj_pvals, _, _ = multipletests(pvals, 0.05, 'bonferroni')
+        _, adj_pvals, _, _ = multipletests(pvals, alpha, 'bonferroni')  # bonferroni correction of p-values
         for c, a in zip(conds, adj_pvals):
             adj_coeffs[clust][c] = a
-    if output_type == 'json':
-        #dict_to_json(coeffs, outfl)
-        pass
-    elif output_type == 'df':
-        pd.DataFrame(coeffs).to_csv(outfl, sep='\t')
 
     return coeffs, adj_coeffs
 
@@ -241,3 +236,54 @@ def get_data(input_file,
     logger.info(f'Finished processing data from {input_file}.')
     return df, mat, pat_ids, exclusions, cgrps
 
+
+def map_to_scale(arf):
+    """Maps ARF value to a scaled value to show magnitude better"""
+    scaled_arf = 2 * (arf - 1) / (arf + 1)
+    return scaled_arf
+
+
+def get_bubble_heatmap_input(values_dict,
+                             pvalue_dict,
+                             alpha: float = 0.05,
+                             arf_scaling = False):
+    """Formats values so the user can make a bubble heatmap.
+    :param values_dict: the dictionary of dictionaries containing {cluster ID: {condition: value}},
+        where value can be prevalences or ARF values
+    :param pvalue_dict: the dictionary of dictionaries containing {cluster ID: {condition: pvalue}}; the user should
+        decide whether to use adjusted or regular p-values
+    :param alpha: the pvalue threshold for significance; anything >= to pvalue is omitted
+    :param arf_scaling: boolean value indicating whether to scale the values_dict for better visualization (recommended if they are ARFs)
+    """
+    assert set(values_dict.keys()) == set(pvalue_dict.keys()), "The keys of the values_dict and pvalue_dict must match"
+    
+    heatmap_data = pd.DataFrame(values_dict)
+
+    # get the masks to omit the non-significant values
+    heatmap_masks = {key: dict() for key in values_dict.keys()}
+    for cluster, val in values_dict.items():
+        for condition in val:
+            if pvalue_dict[cluster][condition] >= alpha:
+                heatmap_masks[cluster][condition] = True
+            else:
+                heatmap_masks[cluster][condition] = False
+    heatmap_masks = pd.DataFrame(heatmap_masks)
+
+    # find the rows where all columns are true, drop them
+    true_indices = heatmap_masks.all(axis=1)
+    true_indices = list(true_indices.index[true_indices])
+    heatmap_data.drop(true_indices, inplace=True)
+    heatmap_masks.drop(true_indices, inplace=True)
+
+    # scale if necessary
+    if arf_scaling:
+        heatmap_data = heatmap_data.applymap(map_to_scale)
+
+    # Flatten the DataFrame
+    result_df = heatmap_data.where(~heatmap_masks, np.nan)
+    flattened_df = pd.melt(result_df.reset_index(), id_vars=['index'], var_name='cluster', value_name='ARF')
+    flattened_df.rename(columns={'index': 'condition'}, inplace=True)
+    flattened_df['abs_ARF'] = flattened_df['ARF'].map(lambda x: abs(x))  # get the absval for magnitude
+    flattened_df['overrep'] = flattened_df['ARF'].map(lambda x: 1 if x > 0 else 0)  # over or under represented directionality
+
+    return flattened_df
