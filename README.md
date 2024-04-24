@@ -2,9 +2,32 @@
 
 This is the code repository corrresponding to the systematic clustering analysis within [TODO add preprint](https://laurendelong21.github.io/).
 
-To begin, create a Python environment and install the package:
+---
+
+## Introduction
+
+Perform a systematic clustering analysis which explores four different approaches upon your binary data.
+
+You can also visualize your results using adjusted relative frequencies on a bubble heatmap:
+
+<div style="background-color: white; display: inline-block; padding: 10px;">
+
+![Bubble heatmap](./images/bubble_heatmap_systems.png)
+
+</div>
+
+<br>
+
+:arrow_right: Jump to [**Visualization Section**](#vis)
+
+<br>
+
+---
+
 
 ## Installation
+
+To begin, create a Python environment and install the package.
 
 Clone and navigate to the repository:
 
@@ -33,6 +56,8 @@ or **with conda** (choose python>=3.7):
 
 <br>
 
+---
+
 ## Usage
 
 <br>
@@ -57,7 +82,7 @@ This package operates upon [tab-separated files](https://en.wikipedia.org/wiki/T
 **Dummy File**
 <a name="dummy"></a>
 
-If you wish to test out the functionality of the `clustr` package, you can create a dummy file using [generate_dummy_data.sh](https://github.com/laurendelong21/mrc_clustering/generate_dummy_data.sh). 
+If you wish to test out the functionality of the `clustr` package, you can create a dummy file using [generate_dummy_data.sh](https://github.com/laurendelong21/mrc_clustering/blob/main/generate_dummy_data.sh). 
 
 Assuming you're already in the repository's directory,
 
@@ -70,13 +95,15 @@ Run the script in the terminal. It will prompt you to enter the nunber of column
 
 <br>
 
+---
+
 ### Tutorial
 
-[tutorial.ipynb](https://github.com/laurendelong21/mrc_clustering/tutorial.ipynb) gives an overview of how you can use the `clustr` package within your Python code.
+[tutorial.ipynb](https://github.com/laurendelong21/mrc_clustering/blob/main/tutorial.ipynb) gives an overview of how you can use the `clustr` package within your Python code.
 
 To run the notebook, you need to do a few things first. 
 
-1. First, create a dummy file by running [generate_dummy_data.sh](https://github.com/laurendelong21/mrc_clustering/generate_dummy_data.sh). Directions are [above](#dummy).
+1. First, create a dummy file by running [generate_dummy_data.sh](https://github.com/laurendelong21/mrc_clustering/blob/main/generate_dummy_data.sh). Directions are [above](#dummy).
 
 
 2. Connect your virtual environment as a kernel. Depending upon what you're using (Jupyter notebook, VSCode, etc.), there are various instructions online for doing so. It should be something like activating the environment, then:
@@ -86,6 +113,8 @@ To run the notebook, you need to do a few things first.
 3. With your environment as the kernel, use the notebook. Be careful with changing the proportion of the file used- these methods can be computationally expensive with large files, so consider whether your machine can handle working with the whole dummy file.
 
 <br>
+
+---
 
 ### Command Line Interface (CLI)
 
@@ -116,6 +145,8 @@ Read further for options and examples.
 Below, we describe how to use each of these commands with examples.
 
 <br>
+
+
 
 **agg**
 
@@ -286,3 +317,35 @@ For example,
 In the above, we will do *k*-modes clustering upon **5%** of the rows in the dummy data file, after dropping those with no conditions (all zeroes). Before those steps, however, we are taking out `disease_3` and saving the labels for this condition separately. 
 
 Here, we are looking for 10 clusters, and repeating this analysis 5 times. Execution will automatically make five subdirectories within the *k*-modes results folder, and each subdirectory will comprise individual results.
+
+<br>
+
+---
+
+<br>
+
+## Visualization
+<a name="vis"></a>
+
+Visualize the results of your cluster with a bubble heatmap! See the [bubble_heatmap_tutorial.ipynb](https://github.com/laurendelong21/mrc_clustering/blob/main/bubble_heatmap_tutorial.ipynb) as a guide for visualizing *your* results.
+
+**As in our paper, a bubble heatmap:**
+
+- places ARF values on a grid in which the y-axis contains conditions, 
+- the x-axis contains clusters, 
+- and data points are colored blue (under-representation) or red (over-representation) at each intersection. 
+
+**How to read a bubble heatmap:**
+
+- The magnitude of under- or over-representation is indicated by the size of the data point, or bubble.
+- Points which are not statistically significant were omitted. 
+    - Therefore, conditions with no significant values were omitted entirely from the y-axis.
+- Furthermore, for visualization purposes, the ARF values were adjusted so that values denoting under-representation (between zero and one) were mapped to a similar scale as those denoting over-representation (values greater than one).
+
+<br>
+
+<div style="background-color: white; display: inline-block; padding: 10px;">
+
+![Bubble heatmap](./images/bubble_heatmap_systems.png)
+
+</div>
