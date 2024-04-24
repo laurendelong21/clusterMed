@@ -50,6 +50,31 @@ def get_adjusted_cluster_conds(df: pd.DataFrame,
     return dict(arfs), dict(cluster_prevalences)
 
 
+def get_arfs_prevalences(df: pd.DataFrame,
+                         labels_column: str,
+                         conditions: List[str]):
+    """Gets the adjusted relative condition frequencies (ARFs) and prevalences for each cluster;
+        returns them as dictionaries
+    :param df: the dataframe being operated upon
+    :param conditions: the list of conditions; often the column names
+    :param labels_column: the column name containing the cluster labels
+    :param cluster_no: the cluster number to select"""
+    arfs_dict = {}  # to store the ARF values
+    prevs_dict = {}  # to store the prevalences relative to each cluster
+
+    cohort_prevalences = df[conditions].sum().sort_values(ascending=False).div(len(df))  # relative freqs in the whole cohort
+
+    for clust in df[labels_column].unique():
+        cluster_counts = get_top_cluster_conds(df, conditions, labels_column, clust)  # counts of each condition within cluster
+        cluster_prevalences = cluster_counts.div(df[labels_column].value_counts()[clust])  # relative freqs within cluster
+        arfs = cluster_prevalences.div(cohort_prevalences).sort_values(ascending=False)
+
+        arfs_dict[clust] = dict(arfs)
+        prevs_dict[clust] = dict(cluster_prevalences)
+
+    return arfs_dict, prevs_dict
+
+
 def generate_contingency_table(df: pd.DataFrame,
                                condition: str,
                                labels_column: str,
@@ -76,7 +101,7 @@ def generate_contingency_table(df: pd.DataFrame,
     return cont_table
 
 
-def find_fischers_coefficients(df: pd.DataFrame,
+def get_fischers_coefficients(df: pd.DataFrame,
                                labels_column: str,
                                conditions: List[str],
                                alpha: float = 0.05):
@@ -281,9 +306,9 @@ def get_bubble_heatmap_input(values_dict,
 
     # Flatten the DataFrame
     result_df = heatmap_data.where(~heatmap_masks, np.nan)
-    flattened_df = pd.melt(result_df.reset_index(), id_vars=['index'], var_name='cluster', value_name='ARF')
+    flattened_df = pd.melt(result_df.reset_index(), id_vars=['index'], var_name='cluster', value_name='values')
     flattened_df.rename(columns={'index': 'condition'}, inplace=True)
-    flattened_df['abs_ARF'] = flattened_df['ARF'].map(lambda x: abs(x))  # get the absval for magnitude
-    flattened_df['overrep'] = flattened_df['ARF'].map(lambda x: 1 if x > 0 else 0)  # over or under represented directionality
+    flattened_df['abs_values'] = flattened_df['values'].map(lambda x: abs(x))  # get the absval for magnitude
+    flattened_df['overrep'] = flattened_df['values'].map(lambda x: 1 if x > 0 else 0)  # over or under represented directionality
 
     return flattened_df
