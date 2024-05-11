@@ -31,8 +31,8 @@ To begin, create a Python environment and install the package.
 
 Clone and navigate to the repository:
 
-    git clone https://github.com/laurendelong21/mrc_clustering.git
-    cd mrc_clustering
+    git clone https://github.com/laurendelong21/clusterMed.git
+    cd clusterMed
 
 create and activate a Python environment (replace `$ENV_NAME$` with your desired environment name):
 
@@ -82,11 +82,11 @@ This package operates upon [tab-separated files](https://en.wikipedia.org/wiki/T
 **Dummy File**
 <a name="dummy"></a>
 
-If you wish to test out the functionality of the `clustr` package, you can create a dummy file using [generate_dummy_data.sh](https://github.com/laurendelong21/mrc_clustering/blob/main/generate_dummy_data.sh). 
+If you wish to test out the functionality of the `clustr` package, you can create a dummy file using [generate_dummy_data.sh](https://github.com/laurendelong21/clusterMed/blob/main/generate_dummy_data.sh). 
 
 Assuming you're already in the repository's directory,
 
-    cd mrc_clustering
+    cd clusterMed
 
 Run the script in the terminal. It will prompt you to enter the nunber of columns (conditions) and rows (participants) you want. If you just press enter, it will generate a dummy file with 10,000 faux participants and 50 condition columns.
 
@@ -99,11 +99,11 @@ Run the script in the terminal. It will prompt you to enter the nunber of column
 
 ### Tutorial
 
-[tutorial.ipynb](https://github.com/laurendelong21/mrc_clustering/blob/main/tutorial.ipynb) gives an overview of how you can use the `clustr` package within your Python code.
+[tutorial.ipynb](https://github.com/laurendelong21/clusterMed/blob/main/tutorial.ipynb) gives an overview of how you can use the `clustr` package within your Python code.
 
 To run the notebook, you need to do a few things first. 
 
-1. First, create a dummy file by running [generate_dummy_data.sh](https://github.com/laurendelong21/mrc_clustering/blob/main/generate_dummy_data.sh). Directions are [above](#dummy).
+1. First, create a dummy file by running [generate_dummy_data.sh](https://github.com/laurendelong21/clusterMed/blob/main/generate_dummy_data.sh). Directions are [above](#dummy).
 
 
 2. Connect your virtual environment as a kernel. Depending upon what you're using (Jupyter notebook, VSCode, etc.), there are various instructions online for doing so. It should be something like activating the environment, then:
@@ -327,7 +327,7 @@ Here, we are looking for 10 clusters, and repeating this analysis 5 times. Execu
 ## Visualization
 <a name="vis"></a>
 
-Visualize the results of your cluster with a bubble heatmap! See the [bubble_heatmap_tutorial.ipynb](https://github.com/laurendelong21/mrc_clustering/blob/main/bubble_heatmap_tutorial.ipynb) as a guide for visualizing *your* results.
+Visualize the results of your cluster with a bubble heatmap! See the [bubble_heatmap_tutorial.ipynb](https://github.com/laurendelong21/clusterMed/blob/main/bubble_heatmap_tutorial.ipynb) as a guide for visualizing *your* results.
 
 **As in our paper, a bubble heatmap:**
 
