@@ -1,6 +1,7 @@
 # A Systematic Clustering Analysis for Binary Multimorbidity Data
 
-This is the code repository corrresponding to the systematic clustering analysis within [TODO add preprint](https://laurendelong21.github.io/).
+This is the code repository corrresponding to the systematic clustering analysis within our article, "Investigating associations between physical multimorbidity clusters and subsequent depression: cluster and survival analysis of UK
+Biobank data" (preprint out soon).
 
 ---
 
