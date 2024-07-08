@@ -1,7 +1,7 @@
 # A Systematic Clustering Analysis for Binary Multimorbidity Data
 
-This is the code repository corrresponding to the systematic clustering analysis within our article, "Investigating associations between physical multimorbidity clusters and subsequent depression: cluster and survival analysis of UK
-Biobank data" (preprint out soon).
+This is the code repository corrresponding to the systematic clustering analysis within our article, ["Investigating associations between physical multimorbidity clusters and subsequent depression: cluster and survival analysis of UK
+Biobank data"](https://www.medrxiv.org/content/10.1101/2024.07.05.24310004v1).
 
 ---
 
